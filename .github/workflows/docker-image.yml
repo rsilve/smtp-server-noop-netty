@@ -14,5 +14,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Set up JDK 1
+      uses: actions/setup-java@v1
+      with:
+          java-version: 11
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
     - name: Build the Docker image
-      run: docker build . --file src/docker/Dockerfile --tag robertsilve/smtp-server-noop-netty:$(date +%s)
+      run: docker build . --file src/docker/Dockerfile --tag rsilve/smtp-server-noop-netty/server:$(date +%s)
+    - name: Push to GitHub Packages
+      uses: docker/build-push-action@v1
+      with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: rsilve/smtp-server-noop-netty/server
+          tag_with_ref: true
