@@ -21,7 +21,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Push to GitHub Packages
-      uses: docker/build-push-action@v2
+      uses: docker/build-push-action@v1
       with:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
@@ -29,4 +29,4 @@ jobs:
           repository: rsilve/smtp-server-noop-netty/server
           tag_with_ref: true
           context: .
-          file: ./src/docker/Dockerfile
+          dockerfile: ./src/docker/Dockerfile
