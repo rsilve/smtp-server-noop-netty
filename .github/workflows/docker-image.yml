@@ -25,6 +25,6 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: rsilve/smtp-server-noop-netty
+        repository: robertsilve/smtp-server-noop-netty
         tag_with_ref: true
         dockerfile: ./src/docker/Dockerfile
