@@ -1,6 +1,5 @@
 package net.silve.codec;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,10 +8,10 @@ import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.util.concurrent.Future;
-import net.silve.codec.session.MessageSession;
 import net.silve.codec.command.CommandHandler;
 import net.silve.codec.command.CommandMap;
 import net.silve.codec.command.InvalidProtocolException;
+import net.silve.codec.session.MessageSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Handles a server-side channel.
  */
-public class SmtpRequestHandler extends ChannelInboundHandlerAdapter { // (1)
+public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(SmtpRequestHandler.class);
 
@@ -28,10 +27,8 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter { // (1)
 
     private MessageSession messageSession;
 
-    private ByteBuf buffer = null;
-
     @Override
-    public void channelActive(final ChannelHandlerContext ctx) throws Exception { // (1)
+    public void channelActive(final ChannelHandlerContext ctx) throws Exception {
         messageSession = MessageSession.newInstance();
 
         super.channelActive(ctx);

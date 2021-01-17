@@ -22,7 +22,7 @@ class SmtpServerChannelInitializer extends ChannelInitializer<SocketChannel> {
     public void initChannel(SocketChannel ch) throws Exception {
         ch.pipeline()
                 .addLast(new ReadTimeoutHandler(1, TimeUnit.SECONDS))
-                .addLast(new WriteTimeoutHandler(1, TimeUnit.SECONDS))
+                .addLast(new WriteTimeoutHandler(10, TimeUnit.SECONDS))
                 .addLast(new DelimiterBasedFrameDecoder(2000, false, CRLF_DELIMITER))
                 .addLast(new SmtpRequestDecoder())
                 .addLast(new SmtpResponseEncoder())
