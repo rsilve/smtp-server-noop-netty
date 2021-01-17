@@ -51,7 +51,7 @@ public class SmtpServer {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        int port = 2525;
+        int port = 25;
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
         }
