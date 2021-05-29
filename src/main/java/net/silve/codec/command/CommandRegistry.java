@@ -11,7 +11,7 @@ public enum CommandRegistry {
     NOOP(new QUITHandler()),
     QUIT(new QUITHandler()),
     RCPT(new RcptHandler(), new RcptParser()),
-    RSET(new QUITHandler()),
+    RSET(new RSETHandler()),
     STARTTLS(new StartTlsHandler()),
     VRFY(new QUITHandler()),
     EXPN(new QUITHandler()),

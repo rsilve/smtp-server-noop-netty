@@ -118,4 +118,8 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+       cause.printStackTrace();
+    }
 }
