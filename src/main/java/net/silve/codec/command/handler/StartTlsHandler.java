@@ -7,8 +7,6 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AsciiString;
 import net.silve.codec.ConstantResponse;
 import net.silve.codec.SmtpRequest;
-import net.silve.codec.command.CommandHandler;
-import net.silve.codec.command.HandlerResult;
 import net.silve.codec.session.MessageSession;
 import net.silve.codec.ssl.SslUtils;
 import org.jetbrains.annotations.NotNull;

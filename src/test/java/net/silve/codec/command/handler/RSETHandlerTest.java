@@ -3,7 +3,6 @@ package net.silve.codec.command.handler;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.ConstantResponse;
 import net.silve.codec.DefaultSmtpRequest;
-import net.silve.codec.command.HandlerResult;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 

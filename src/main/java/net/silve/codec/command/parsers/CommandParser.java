@@ -1,4 +1,4 @@
-package net.silve.codec.command;
+package net.silve.codec.command.parsers;
 
 
 import io.netty.util.AsciiString;

@@ -1,4 +1,4 @@
-package net.silve.codec.command;
+package net.silve.codec.command.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 

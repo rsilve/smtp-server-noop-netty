@@ -4,9 +4,9 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.silve.codec.SmtpRequest;
-import net.silve.codec.command.CommandHandler;
-import net.silve.codec.command.HandlerResult;
-import net.silve.codec.command.InvalidProtocolException;
+import net.silve.codec.command.handler.CommandHandler;
+import net.silve.codec.command.handler.HandlerResult;
+import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.session.MessageSession;
 
 import java.util.Objects;

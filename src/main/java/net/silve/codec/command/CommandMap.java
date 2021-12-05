@@ -1,5 +1,8 @@
 package net.silve.codec.command;
 
+import net.silve.codec.command.handler.CommandHandler;
+import net.silve.codec.command.parsers.CommandParser;
+
 import java.util.HashMap;
 import java.util.Map;
 

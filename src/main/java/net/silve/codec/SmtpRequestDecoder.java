@@ -9,8 +9,8 @@ import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
 import io.netty.util.CharsetUtil;
 import io.netty.util.internal.ObjectUtil;
-import net.silve.codec.command.CommandParser;
-import net.silve.codec.command.InvalidSyntaxException;
+import net.silve.codec.command.parsers.CommandParser;
+import net.silve.codec.command.parsers.InvalidSyntaxException;
 import net.silve.codec.command.CommandMap;
 
 import java.util.Objects;
