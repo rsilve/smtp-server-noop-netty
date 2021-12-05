@@ -9,6 +9,7 @@ import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class MailHandlerTest {
 
@@ -22,6 +23,32 @@ class MailHandlerTest {
     void shouldReturnResponse() throws InvalidProtocolException {
         HandlerResult handle = new MailHandler().handle(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"), MessageSession.newInstance());
         assertEquals(ConstantResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
+    }
+
+    @Test
+    void shouldThrowExceptionIfTransactionAlreadStarted()  {
+        try {
+            HandlerResult handle = new MailHandler()
+                    .handle(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"),
+                            MessageSession.newInstance().setTransactionStarted(true));
+            assertEquals(ConstantResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
+            fail();
+        } catch (InvalidProtocolException e) {
+            assertEquals(ConstantResponse.RESPONSE_SENDER_ALREADY_SPECIFIED, e.getResponse());
+        }
+    }
+
+    @Test
+    void shouldThrowExceptionRequestParameterIsEmpty()  {
+        try {
+            HandlerResult handle = new MailHandler()
+                    .handle(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL),
+                            MessageSession.newInstance());
+            assertEquals(ConstantResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
+            fail();
+        } catch (InvalidProtocolException e) {
+            assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, e.getResponse());
+        }
     }
 
 }

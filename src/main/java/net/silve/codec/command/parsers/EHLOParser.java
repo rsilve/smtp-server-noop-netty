@@ -1,7 +1,6 @@
-package net.silve.codec.command.handler;
+package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
-import net.silve.codec.command.parsers.NoopParser;
 
 public class EHLOParser extends NoopParser {
 

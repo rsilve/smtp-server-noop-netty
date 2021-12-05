@@ -1,6 +1,7 @@
 package net.silve.codec.command;
 
 import net.silve.codec.command.handler.*;
+import net.silve.codec.command.parsers.EHLOParser;
 import net.silve.codec.command.parsers.MailParser;
 import net.silve.codec.command.parsers.NoopParser;
 import net.silve.codec.command.parsers.RcptParser;
