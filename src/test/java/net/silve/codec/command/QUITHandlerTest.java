@@ -13,22 +13,22 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class RSETHandlerTest {
+class QUITHandlerTest {
 
     @Test
     void shouldHaveName() {
-        CharSequence name = new RSETHandler().getName();
-        assertEquals(SmtpCommand.RSET.name(), name);
+        CharSequence name = new QUITHandler().getName();
+        assertEquals(SmtpCommand.QUIT.name(), name);
     }
 
     @Test
-    void shouldExecute() {
-        SimpleChannelInboundHandler<SmtpRequest> handler = new TestInboundHandler(new RSETHandler());
+    void shouldReturnResponse() {
+        SimpleChannelInboundHandler<SmtpRequest> handler = new TestInboundHandler(new QUITHandler());
         EmbeddedChannel channel = new EmbeddedChannel(handler);
         assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.EHLO)));
         channel.finish();
         SmtpResponse outbound = channel.readOutbound();
-        assertEquals(ConstantResponse.RESPONSE_RSET_OK, outbound);
+        assertEquals(ConstantResponse.RESPONSE_BYE, outbound);
     }
 
 }
