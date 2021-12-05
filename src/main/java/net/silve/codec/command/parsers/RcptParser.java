@@ -1,7 +1,9 @@
-package net.silve.codec.command;
+package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
+import net.silve.codec.command.CommandParser;
+import net.silve.codec.command.InvalidSyntaxException;
 
 public class RcptParser extends CommandParser {
 

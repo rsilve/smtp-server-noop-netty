@@ -1,12 +1,15 @@
-package net.silve.codec.command;
+package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
+import net.silve.codec.command.CommandParser;
+import net.silve.codec.command.InvalidSyntaxException;
 
 
 public class MailParser extends CommandParser {
 
-    private static InvalidSyntaxException FROM_REQUIRRED_EXCEPTION = new InvalidSyntaxException("'MAIL FROM:' required");
+    private static final InvalidSyntaxException FROM_REQUIRRED_EXCEPTION = new InvalidSyntaxException("'MAIL FROM:' required");
+
     @Override
     public CharSequence getName() {
         return SmtpCommand.MAIL.name();

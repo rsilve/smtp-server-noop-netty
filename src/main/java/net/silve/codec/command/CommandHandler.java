@@ -1,19 +1,25 @@
 package net.silve.codec.command;
 
-import io.netty.channel.ChannelHandlerContext;
-
-import io.netty.handler.codec.smtp.SmtpResponse;
-import io.netty.util.concurrent.Future;
-import net.silve.codec.session.MessageSession;
 import net.silve.codec.SmtpRequest;
+import net.silve.codec.session.MessageSession;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class CommandHandler {
+import java.util.Objects;
 
-    public abstract CharSequence getName();
-    public abstract Future<SmtpResponse> execute(SmtpRequest request, ChannelHandlerContext ctx, MessageSession session) throws InvalidProtocolException;
+public interface CommandHandler {
 
-    protected Future<SmtpResponse> promiseFrom(SmtpResponse response, ChannelHandlerContext ctx) {
-       return ctx.executor().newSucceededFuture(response);
+     CharSequence getName();
+
+    @NotNull
+    HandlerResult handle(@NotNull SmtpRequest request, @NotNull MessageSession session) throws InvalidProtocolException;
+
+    @NotNull
+    default HandlerResult response(@NotNull SmtpRequest request, @NotNull MessageSession session) throws InvalidProtocolException {
+        Objects.requireNonNull(request, "request object must be not null");
+        Objects.requireNonNull(session, "session object must be not null");
+        HandlerResult result = handle(request, session);
+        Objects.requireNonNull(result, "handler must not return null");
+        return result;
     }
 
 }

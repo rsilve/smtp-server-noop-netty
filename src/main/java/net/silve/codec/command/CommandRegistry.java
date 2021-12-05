@@ -1,11 +1,16 @@
 package net.silve.codec.command;
 
+import net.silve.codec.command.handler.*;
+import net.silve.codec.command.parsers.MailParser;
+import net.silve.codec.command.parsers.NoopParser;
+import net.silve.codec.command.parsers.RcptParser;
+
 public enum CommandRegistry {
 
     AUTH(new QUITHandler()),
     DATA(new DataHandler()),
     EHLO(new EHLOHandler(), new EHLOParser()),
-    HELO(new QUITHandler()),
+    HELO(new HELOHandler() ),
     HELP(new QUITHandler()),
     MAIL(new MailHandler(), new MailParser()),
     NOOP(new QUITHandler()),

@@ -15,6 +15,9 @@ public class ConstantResponse {
             AsciiString.of("<hostname>"),
             AsciiString.of("SIZE 20480000"), AsciiString.of("STARTTLS"));
 
+    public static final SmtpResponse RESPONSE_HELO = new DefaultSmtpResponse(250,
+            AsciiString.of("<hostname>"));
+
     public static final SmtpResponse RESPONSE_STARTTLS = new DefaultSmtpResponse(220,
             AsciiString.of("Ready to start TLS"));
 

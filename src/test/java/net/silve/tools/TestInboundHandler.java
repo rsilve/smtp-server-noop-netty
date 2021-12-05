@@ -5,26 +5,31 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.silve.codec.SmtpRequest;
 import net.silve.codec.command.CommandHandler;
+import net.silve.codec.command.HandlerResult;
 import net.silve.codec.command.InvalidProtocolException;
 import net.silve.codec.session.MessageSession;
+
+import java.util.Objects;
 
 public class TestInboundHandler extends SimpleChannelInboundHandler<SmtpRequest> {
 
     private final CommandHandler handler;
-    private MessageSession session;
+    private final MessageSession session;
 
     public TestInboundHandler(CommandHandler handler) {
-        super();
-        this.handler = handler;
+        this(handler, MessageSession.newInstance());
     }
 
     public TestInboundHandler(CommandHandler handler, MessageSession session) {
-        this(handler);
+        super();
+        this.handler = handler;
         this.session = session;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, SmtpRequest request) throws InvalidProtocolException {
-        handler.execute(request, ctx, session).addListener(future -> ctx.writeAndFlush(future.get()).addListener(ChannelFutureListener.CLOSE));
+        Objects.requireNonNull(request);
+        HandlerResult result = handler.response(request, session);
+        ctx.writeAndFlush(result.getResponse()).addListener(ChannelFutureListener.CLOSE);
     }
 }

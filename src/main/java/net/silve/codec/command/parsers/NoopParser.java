@@ -1,6 +1,7 @@
-package net.silve.codec.command;
+package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.codec.command.CommandParser;
 
 public class NoopParser extends CommandParser {
 

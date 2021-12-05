@@ -7,9 +7,9 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpResponse;
-import io.netty.util.concurrent.Future;
 import net.silve.codec.command.CommandHandler;
 import net.silve.codec.command.CommandMap;
+import net.silve.codec.command.HandlerResult;
 import net.silve.codec.command.InvalidProtocolException;
 import net.silve.codec.session.MessageSession;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     }
 
     @Override
-    public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead(final ChannelHandlerContext ctx, Object msg) {
         if (msg instanceof SmtpRequest) {
             readRequest(ctx, (SmtpRequest) msg);
         } else {
@@ -59,38 +59,32 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         ((SmtpContent) msg).recycle();
     }
 
-    private void readRequest(ChannelHandlerContext ctx, SmtpRequest msg) {
-        final SmtpRequest request = msg;
+    private void readRequest(ChannelHandlerContext ctx, SmtpRequest request) {
         final SmtpCommand command = request.command();
         final CommandHandler commandHandler = commandMap.getHandler(command.name());
         try {
-            final Future<SmtpResponse> response = commandHandler.execute(request, ctx, messageSession);
+            HandlerResult result = commandHandler.response(request, messageSession);
             messageSession.setLastCommand(command);
-            response.addListener(future -> {
-                assert response == future;
-                if (future.isSuccess()) {
-                    final SmtpResponse object = (SmtpResponse) future.get();
-                    logger.trace("[{}] Request: {}, Response: {}", messageSession.getId(), request, object);
-                    final ChannelFuture channelFuture = ctx.writeAndFlush(object);
-                    if (SmtpCommand.QUIT.equals(command)) {
-                        channelFuture.addListener(ChannelFutureListener.CLOSE);
-                    }
+            result.getAction().execute(ctx);
+            logger.trace("[{}] Request: {}, Response: {}", messageSession.getId(), request, result.getResponse());
+            final ChannelFuture channelFuture = ctx.writeAndFlush(result.getResponse());
+            if (SmtpCommand.QUIT.equals(command)) {
+                channelFuture.addListener(ChannelFutureListener.CLOSE);
+            }
+            request.recycle();
 
-                } else {
-                    final ChannelFuture channelFuture = ctx.writeAndFlush(ConstantResponse.RESPONSE_BYE);
-                    channelFuture.addListener(ChannelFutureListener.CLOSE);
-                }
-                request.recycle();
-            });
-        } catch (InvalidProtocolException e) {
+        } catch (
+                InvalidProtocolException e) {
             logger.error("Protocol error", e);
             ctx.writeAndFlush(e.getResponse()).addListener(ChannelFutureListener.CLOSE);
             request.recycle();
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             logger.error("error", e);
             ctx.writeAndFlush(e.getMessage()).addListener(ChannelFutureListener.CLOSE);
             request.recycle();
         }
+
     }
 
     @Override
