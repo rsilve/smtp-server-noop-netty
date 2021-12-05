@@ -52,6 +52,12 @@
             <artifactId>annotations</artifactId>
             <version>22.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>4.5.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 

@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public interface CommandHandler {
 
-     CharSequence getName();
+    CharSequence getName();
 
     @NotNull
     HandlerResult handle(@NotNull SmtpRequest request, @NotNull MessageSession session) throws InvalidProtocolException;
