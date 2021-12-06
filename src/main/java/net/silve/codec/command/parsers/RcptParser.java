@@ -5,6 +5,12 @@ import io.netty.util.AsciiString;
 
 public class RcptParser extends CommandParser {
 
+    private static final RcptParser instance = new RcptParser();
+
+    public static RcptParser singleton() {
+        return instance;
+    }
+
     @Override
     public CharSequence getName() {
         return SmtpCommand.RCPT.name();

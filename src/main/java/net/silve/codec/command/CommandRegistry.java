@@ -7,13 +7,13 @@ public enum CommandRegistry {
 
     AUTH(QUITHandler.singleton()),
     DATA(DataHandler.singleton()),
-    EHLO(EHLOHandler.singleton(), new EHLOParser()),
+    EHLO(EHLOHandler.singleton(), EHLOParser.singleton()),
     HELO(HELOHandler.singleton()),
     HELP(QUITHandler.singleton()),
-    MAIL(MailHandler.singleton(), new MailParser()),
+    MAIL(MailHandler.singleton(), MailParser.singleton()),
     NOOP(QUITHandler.singleton()),
     QUIT(QUITHandler.singleton()),
-    RCPT(RcptHandler.singleton(), new RcptParser()),
+    RCPT(RcptHandler.singleton(), RcptParser.singleton()),
     RSET(RSETHandler.singleton()),
     STARTTLS(StartTlsHandler.singleton()),
     VRFY(QUITHandler.singleton()),
@@ -30,7 +30,7 @@ public enum CommandRegistry {
 
     CommandRegistry(CommandHandler cmd) {
         this.command = cmd;
-        this.parser = new NoopParser();
+        this.parser = NoopParser.singleton();
     }
 
     public CommandHandler getHandler() {

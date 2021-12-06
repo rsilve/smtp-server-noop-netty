@@ -6,6 +6,12 @@ import io.netty.util.AsciiString;
 
 public class MailParser extends CommandParser {
 
+    private static final MailParser instance = new MailParser();
+
+    public static MailParser singleton() {
+        return instance;
+    }
+
     private static final InvalidSyntaxException FROM_REQUIRRED_EXCEPTION = new InvalidSyntaxException("'MAIL FROM:' required");
 
     @Override
