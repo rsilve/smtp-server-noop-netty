@@ -5,20 +5,20 @@ import net.silve.codec.command.parsers.*;
 
 public enum CommandRegistry {
 
-    AUTH(new QUITHandler()),
-    DATA(new DataHandler()),
-    EHLO(new EHLOHandler(), new EHLOParser()),
-    HELO(new HELOHandler() ),
-    HELP(new QUITHandler()),
-    MAIL(new MailHandler(), new MailParser()),
-    NOOP(new QUITHandler()),
-    QUIT(new QUITHandler()),
-    RCPT(new RcptHandler(), new RcptParser()),
-    RSET(new RSETHandler()),
-    STARTTLS(new StartTlsHandler()),
-    VRFY(new QUITHandler()),
-    EXPN(new QUITHandler()),
-    EMTPY(new EmptyHandler());
+    AUTH(QUITHandler.singleton()),
+    DATA(DataHandler.singleton()),
+    EHLO(EHLOHandler.singleton(), new EHLOParser()),
+    HELO(HELOHandler.singleton()),
+    HELP(QUITHandler.singleton()),
+    MAIL(MailHandler.singleton(), new MailParser()),
+    NOOP(QUITHandler.singleton()),
+    QUIT(QUITHandler.singleton()),
+    RCPT(RcptHandler.singleton(), new RcptParser()),
+    RSET(RSETHandler.singleton()),
+    STARTTLS(StartTlsHandler.singleton()),
+    VRFY(QUITHandler.singleton()),
+    EXPN(QUITHandler.singleton()),
+    EMTPY(EmptyHandler.singleton());
 
     private final CommandHandler command;
     private final CommandParser parser;

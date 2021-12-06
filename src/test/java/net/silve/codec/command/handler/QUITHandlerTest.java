@@ -12,13 +12,13 @@ class QUITHandlerTest {
 
     @Test
     void shouldHaveName() {
-        CharSequence name = new QUITHandler().getName();
+        CharSequence name = QUITHandler.singleton().getName();
         assertEquals(SmtpCommand.QUIT.name(), name);
     }
 
     @Test
     void shouldReturnResponse() {
-        HandlerResult handle = new QUITHandler().handle(DefaultSmtpRequest.newInstance(SmtpCommand.EHLO), MessageSession.newInstance());
+        HandlerResult handle = QUITHandler.singleton().handle(DefaultSmtpRequest.newInstance(SmtpCommand.EHLO), MessageSession.newInstance());
         assertEquals(ConstantResponse.RESPONSE_BYE, handle.getResponse());
     }
 

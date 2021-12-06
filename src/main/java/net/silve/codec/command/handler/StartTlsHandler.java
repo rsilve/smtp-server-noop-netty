@@ -14,6 +14,13 @@ import org.jetbrains.annotations.NotNull;
 import javax.net.ssl.SSLEngine;
 
 public class StartTlsHandler implements CommandHandler {
+
+    private static final StartTlsHandler instance = new StartTlsHandler();
+
+    public static StartTlsHandler singleton() {
+        return instance;
+    }
+
     public static final SmtpCommand STARTTLS = SmtpCommand.valueOf(AsciiString.cached("STAR"));
     private final SslContext sslCtx;
 

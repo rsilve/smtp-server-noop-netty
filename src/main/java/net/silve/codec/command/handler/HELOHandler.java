@@ -11,6 +11,12 @@ import org.jetbrains.annotations.NotNull;
 @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 public class HELOHandler implements CommandHandler {
 
+    private static final HELOHandler instance = new HELOHandler();
+
+    public static HELOHandler singleton() {
+        return instance;
+    }
+
     @Override
     public CharSequence getName() {
         return SmtpCommand.HELO.name();

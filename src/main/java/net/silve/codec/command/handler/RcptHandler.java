@@ -12,6 +12,12 @@ import org.jetbrains.annotations.NotNull;
 @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 public class RcptHandler implements CommandHandler {
 
+    private static final RcptHandler instance = new RcptHandler();
+
+    public static RcptHandler singleton() {
+        return instance;
+    }
+
     @Override
     public CharSequence getName() {
         return SmtpCommand.RCPT.name();
