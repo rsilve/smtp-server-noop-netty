@@ -20,8 +20,8 @@ public class RcptParser extends CommandParser {
     public CharSequence[] parse(CharSequence line) throws InvalidSyntaxException {
         AsciiString args = AsciiString.of(line).trim();
         final Pair prefix = parsePrefix(args.trim());
-        final Pair reversePath = parseForwardPath(prefix.getLine().trim());
-        final CharSequence[] result = {reversePath.getToken()};
+        final Pair reversePath = parseForwardPath(prefix.getTail().trim());
+        final CharSequence[] result = {reversePath.getHead()};
         prefix.recycle();
         reversePath.recycle();
         return result;

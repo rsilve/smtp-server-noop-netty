@@ -2,9 +2,6 @@ package net.silve.codec.command.parsers;
 
 
 import io.netty.util.AsciiString;
-import io.netty.util.Recycler;
-
-import java.util.Objects;
 
 public abstract class CommandParser {
 
@@ -28,44 +25,5 @@ public abstract class CommandParser {
         throw new InvalidSyntaxException(String.format("'<path>' required in '%s'", next));
     }
 
-
-    public static class Pair {
-
-        private static final Recycler<Pair> RECYCLER = new Recycler<>() {
-            protected Pair newObject(Recycler.Handle<Pair> handle) {
-                return new Pair(handle);
-            }
-        };
-
-        public static Pair newInstance(AsciiString token, AsciiString line) {
-            final Pair pair = RECYCLER.get();
-
-            pair.token = Objects.requireNonNull(token);
-            pair.line = Objects.requireNonNull(line);
-            return pair;
-        }
-
-        private final Recycler.Handle<Pair> handle;
-
-        private Pair(Recycler.Handle<Pair> handle) {
-            this.handle = handle;
-        }
-
-        public void recycle() {
-            handle.recycle(this);
-        }
-
-        private AsciiString token;
-        private AsciiString line;
-
-
-        public AsciiString getToken() {
-            return token;
-        }
-
-        public AsciiString getLine() {
-            return line;
-        }
-    }
 
 }

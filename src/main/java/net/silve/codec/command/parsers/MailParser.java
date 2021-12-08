@@ -23,15 +23,15 @@ public class MailParser extends CommandParser {
     public CharSequence[] parse(CharSequence line) throws InvalidSyntaxException {
 
         AsciiString args = AsciiString.of(line).trim();
-        final Pair prefix = parsePrefix(args.trim());
-        final Pair reversePath = parseReversePath(prefix.getLine().trim());
-        final CharSequence[] result = {reversePath.getToken()};
-        prefix.recycle();
+        final Pair noPrefix = removePrefix(args.trim());
+        final Pair reversePath = extractReversePath(noPrefix.getTail().trim());
+        final CharSequence[] result = {reversePath.getHead()};
+        noPrefix.recycle();
         reversePath.recycle();
         return result;
     }
 
-    public static Pair parsePrefix(AsciiString line) throws InvalidSyntaxException {
+    public static Pair removePrefix(AsciiString line) throws InvalidSyntaxException {
         if (line.startsWith("FROM:")) {
             return Pair.newInstance(AsciiString.EMPTY_STRING, line.subSequence(5));
         } else {
@@ -39,11 +39,11 @@ public class MailParser extends CommandParser {
         }
     }
 
-    public static Pair parseReversePath(AsciiString path) throws InvalidSyntaxException {
+    public static Pair extractReversePath(AsciiString path) throws InvalidSyntaxException {
         try {
             return parsePath(path);
         } catch (InvalidSyntaxException e) {
-            throw new InvalidSyntaxException(String.format("'MAIL FROM:<forward-path>' required in '%s'", path), e);
+            throw new InvalidSyntaxException(String.format("'<forward-path>' required in '%s'", path), e);
         }
     }
 
