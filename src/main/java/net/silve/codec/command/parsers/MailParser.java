@@ -12,7 +12,7 @@ public class MailParser extends CommandParser {
         return instance;
     }
 
-    private static final InvalidSyntaxException FROM_REQUIRRED_EXCEPTION = new InvalidSyntaxException("'MAIL FROM:' required");
+    private static final InvalidSyntaxException FROM_REQUIRED_EXCEPTION = new InvalidSyntaxException("'MAIL FROM:' required");
 
     @Override
     public CharSequence getName() {
@@ -35,7 +35,7 @@ public class MailParser extends CommandParser {
         if (line.startsWith("FROM:")) {
             return Pair.newInstance(AsciiString.EMPTY_STRING, line.subSequence(5));
         } else {
-            throw FROM_REQUIRRED_EXCEPTION;
+            throw FROM_REQUIRED_EXCEPTION;
         }
     }
 

@@ -86,9 +86,9 @@ public class MessageSession {
         return this;
     }
 
-    public List<AsciiString> addForwardPath(AsciiString path) {
+    public MessageSession addForwardPath(AsciiString path) {
         forwardPath.add(path);
-        return forwardPath;
+        return this;
     }
 
 
