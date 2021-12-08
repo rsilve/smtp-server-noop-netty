@@ -43,7 +43,7 @@ public class MailParser extends CommandParser {
         try {
             return parsePath(path);
         } catch (InvalidSyntaxException e) {
-            throw new InvalidSyntaxException(String.format("'<forward-path>' required in '%s'", path), e);
+            throw new InvalidSyntaxException(String.format("'<reverse-path>' required in '%s'", path), e);
         }
     }
 

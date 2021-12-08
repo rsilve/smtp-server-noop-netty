@@ -45,7 +45,7 @@ class MailParserTest {
             MailParser.singleton().parse("FROM:<name@domain");
             fail();
         } catch (InvalidSyntaxException e) {
-            assertEquals("'<forward-path>' required in '<name@domain'", e.getMessage());
+            assertEquals("'<reverse-path>' required in '<name@domain'", e.getMessage());
         }
 
     }
