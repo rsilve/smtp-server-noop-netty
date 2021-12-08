@@ -21,10 +21,9 @@ public class MailParser extends CommandParser {
 
     @Override
     public CharSequence[] parse(CharSequence line) throws InvalidSyntaxException {
-
-        AsciiString args = AsciiString.of(line).trim();
-        final Pair noPrefix = removePrefix(args.trim());
-        final Pair reversePath = extractReversePath(noPrefix.getTail().trim());
+        AsciiString args = AsciiString.of(line).trim(); // FROM:<reverse-path> extensions
+        final Pair noPrefix = removePrefix(args.trim());// get ['', '<reverse-path> extensions']
+        final Pair reversePath = extractReversePath(noPrefix.getTail().trim()); // get ['reverse-path', '> extensions']
         final CharSequence[] result = {reversePath.getHead()};
         noPrefix.recycle();
         reversePath.recycle();
