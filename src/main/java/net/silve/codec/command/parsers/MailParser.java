@@ -12,7 +12,7 @@ public class MailParser extends CommandParser {
         return instance;
     }
 
-    private static final InvalidSyntaxException FROM_REQUIRED_EXCEPTION = new InvalidSyntaxException("'MAIL FROM:' required");
+    private static final InvalidSyntaxException FROM_REQUIRED_EXCEPTION = new InvalidSyntaxException("'MAIL FROM:' command required");
     private static final AsciiString PREFIX = AsciiString.of("FROM:");
 
     @Override
@@ -23,8 +23,8 @@ public class MailParser extends CommandParser {
     @Override
     public CharSequence[] parse(CharSequence line) throws InvalidSyntaxException {
         AsciiString args = AsciiString.of(line).trim(); // FROM:<reverse-path> extensions
-        final Pair noPrefix = removePrefix(args.trim());// get ['', '<reverse-path> extensions']
-        final Pair reversePath = extractReversePath(noPrefix.getTail().trim()); // get ['reverse-path', '> extensions']
+        final Pair noPrefix = removePrefix(args.trim()); // return ['', '<reverse-path> extensions']
+        final Pair reversePath = extractReversePath(noPrefix.getTail().trim()); // return ['reverse-path', '> extensions']
         final CharSequence[] result = {reversePath.getHead()};
         noPrefix.recycle();
         reversePath.recycle();
