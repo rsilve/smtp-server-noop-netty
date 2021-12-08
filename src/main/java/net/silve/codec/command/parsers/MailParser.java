@@ -13,6 +13,7 @@ public class MailParser extends CommandParser {
     }
 
     private static final InvalidSyntaxException FROM_REQUIRED_EXCEPTION = new InvalidSyntaxException("'MAIL FROM:' required");
+    private static final AsciiString PREFIX = AsciiString.of("FROM:");
 
     @Override
     public CharSequence getName() {
@@ -31,7 +32,7 @@ public class MailParser extends CommandParser {
     }
 
     public static Pair removePrefix(AsciiString line) throws InvalidSyntaxException {
-        if (line.startsWith("FROM:")) {
+        if (line.startsWith(PREFIX)) {
             return Pair.newInstance(AsciiString.EMPTY_STRING, line.subSequence(5));
         } else {
             throw FROM_REQUIRED_EXCEPTION;
@@ -45,8 +46,6 @@ public class MailParser extends CommandParser {
             throw new InvalidSyntaxException(String.format("'<reverse-path>' required in '%s'", path), e);
         }
     }
-
-
 
 
 }
