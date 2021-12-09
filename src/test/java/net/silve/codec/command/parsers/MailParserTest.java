@@ -34,7 +34,7 @@ class MailParserTest {
             MailParser.singleton().parse("FRO:<name@domain.tld> extension");
             fail();
         } catch (InvalidSyntaxException e) {
-            assertEquals("'MAIL FROM:' required", e.getMessage());
+            assertEquals("'MAIL FROM:' command required", e.getMessage());
         }
 
     }

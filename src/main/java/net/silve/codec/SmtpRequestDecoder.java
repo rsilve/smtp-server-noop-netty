@@ -12,6 +12,7 @@ import io.netty.util.internal.ObjectUtil;
 import net.silve.codec.command.parsers.CommandParser;
 import net.silve.codec.command.parsers.InvalidSyntaxException;
 import net.silve.codec.command.CommandMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -30,7 +31,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf frame) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, ByteBuf frame) {
 
         if (!this.contentExpected) {
             readRequest(ctx, frame);
@@ -58,7 +59,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     private void readRequest(ChannelHandlerContext ctx, ByteBuf frame) {
-        SmtpRequest result = null;
+        DefaultSmtpRequest result = null;
         try {
             int readable = frame.readableBytes();
             int readerIndex = frame.readerIndex();
@@ -79,6 +80,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
             }
             ctx.fireChannelRead(result);
         } catch (Exception e) {
+
             if (!Objects.isNull(result)) {
                 result.recycle();
             }
@@ -89,7 +91,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
         return new DecoderException("Received invalid line: '" + buffer.toString(readerIndex, readable, CharsetUtil.US_ASCII) + '\'');
     }
 
-    private CharSequence getCommand(CharSequence line) {
+    private CharSequence getCommand(@NotNull CharSequence line) {
         ObjectUtil.checkNotNull(line, "Invalid protocol: null line");
         if (line.length() < 4) {
             throw new IllegalArgumentException(String.format("Invalid protocol: less than 4 char '%s'", line));
@@ -119,7 +121,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-       cause.printStackTrace();
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        cause.printStackTrace();
     }
 }
