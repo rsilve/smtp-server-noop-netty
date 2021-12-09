@@ -2,13 +2,14 @@ package net.silve.codec.command.parsers;
 
 
 import io.netty.util.AsciiString;
+import net.silve.codec.command.handler.InvalidProtocolException;
 
 public abstract class CommandParser {
 
     protected static final CharSequence[] EMTPY = {};
 
     public abstract CharSequence getName();
-    public abstract CharSequence[] parse(CharSequence line) throws InvalidSyntaxException;
+    public abstract CharSequence[] parse(CharSequence line) throws InvalidProtocolException;
 
     public static Pair parsePath(AsciiString path) throws InvalidSyntaxException {
         AsciiString next = path;
