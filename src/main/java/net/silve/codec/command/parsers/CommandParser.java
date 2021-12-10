@@ -9,6 +9,7 @@ public abstract class CommandParser {
     protected static final CharSequence[] EMTPY = {};
 
     public abstract CharSequence getName();
+
     public abstract CharSequence[] parse(CharSequence line) throws InvalidProtocolException;
 
     public static Pair parsePath(AsciiString path) throws InvalidSyntaxException {
