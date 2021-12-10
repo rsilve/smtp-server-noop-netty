@@ -2,10 +2,12 @@ package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
+import net.silve.codec.ConstantResponse;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class RcptParserTest {
 
@@ -35,7 +37,7 @@ class RcptParserTest {
             RcptParser.singleton().parse("T:<name@domain.tld> extension");
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals("'RCPT TO:' command required", e.getMessage());
+            assertEquals(ConstantResponse.RESPONSE_BAD_RCPT_SYNTAX, e.getResponse());
         }
 
     }
@@ -46,7 +48,7 @@ class RcptParserTest {
             RcptParser.singleton().parse("TO:<name@domain");
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals("'<forward-path>' required in '<name@domain'", e.getMessage());
+            assertEquals(ConstantResponse.RESPONSE_BAD_RECIPIENT_SYNTAX, e.getResponse());
         }
 
     }

@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
 import org.junit.jupiter.api.Test;
@@ -29,24 +30,21 @@ class SmtpRequestDecoderTest {
     void shouldThrowExceptionIfTooShort() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder());
         ByteBuf buf = Unpooled.copiedBuffer("MAIL".getBytes(StandardCharsets.UTF_8));
-        try {
-            channel.writeInbound(buf);
-            fail();
-        } catch (DecoderException e) {
-            assertEquals("Received invalid line: 'MAIL'", e.getMessage());
-        }
+        assertFalse(channel.writeInbound(buf));
+        assertTrue(channel.finish());
+        DefaultSmtpResponse response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_UNKNOWN_COMMAND, response);
     }
 
     @Test
-    void shouldThrowExceptionIfInvalid() {
+    void shouldReturnResponseIfInvalid() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder());
         ByteBuf buf = Unpooled.copiedBuffer("MAIL FRO:<name@domain.tld>".getBytes(StandardCharsets.UTF_8));
-        try {
-            channel.writeInbound(buf);
-            fail();
-        } catch (IllegalArgumentException e) {
-            assertEquals("Invalid protocol: 'MAIL FROM:' command required", e.getMessage());
-        }
+        assertFalse(channel.writeInbound(buf));
+        assertTrue(channel.finish());
+        DefaultSmtpResponse response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_BAD_MAIL_SYNTAX, response);
+
     }
 
 }
