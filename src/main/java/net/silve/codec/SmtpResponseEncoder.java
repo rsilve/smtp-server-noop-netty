@@ -11,17 +11,16 @@ import java.util.List;
 
 public class SmtpResponseEncoder extends MessageToMessageEncoder<SmtpResponse> {
 
-
     private static final char SEPARATOR_LAST = '-';
     private static final char SEPARATOR = ' ';
 
     @Override
-    public boolean acceptOutboundMessage(Object msg) throws Exception {
+    public boolean acceptOutboundMessage(Object msg) {
         return msg instanceof SmtpResponse;
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, SmtpResponse smtpResponse, List<Object> list) throws Exception {
+    protected void encode(ChannelHandlerContext ctx, SmtpResponse smtpResponse, List<Object> list) {
         final int size = smtpResponse.details().size();
         boolean release = true;
         ByteBuf buffer = ctx.alloc().buffer();
@@ -45,4 +44,6 @@ public class SmtpResponseEncoder extends MessageToMessageEncoder<SmtpResponse> {
             }
         }
     }
+
+
 }

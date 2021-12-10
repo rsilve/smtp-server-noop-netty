@@ -68,17 +68,15 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             result.getAction().execute(ctx);
             logger.trace("[{}] Request: {}, Response: {}", messageSession.getId(), request, result.getResponse());
             final ChannelFuture channelFuture = ctx.writeAndFlush(result.getResponse());
-            if (SmtpCommand.QUIT.equals(command)) {
+            if (result.getResponse().code() == 221 || result.getResponse().code() == 421) {
                 channelFuture.addListener(ChannelFutureListener.CLOSE);
             }
-        } catch (
-                InvalidProtocolException e) {
+        } catch (InvalidProtocolException e) {
             logger.error("Protocol error", e);
-            ctx.writeAndFlush(e.getResponse()).addListener(ChannelFutureListener.CLOSE);
-        } catch (
-                Exception e) {
+            ctx.writeAndFlush(e.getResponse());
+        } catch (Exception e) {
             logger.error("error", e);
-            ctx.writeAndFlush(e.getMessage()).addListener(ChannelFutureListener.CLOSE);
+            ctx.writeAndFlush(e.getMessage());
         } finally {
             request.recycle();
         }
