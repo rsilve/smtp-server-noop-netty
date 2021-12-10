@@ -7,11 +7,9 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
 import io.netty.util.CharsetUtil;
-import io.netty.util.internal.ObjectUtil;
 import net.silve.codec.command.CommandMap;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.command.parsers.CommandParser;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -43,20 +41,14 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     private void readContent(ChannelHandlerContext ctx, ByteBuf frame) {
-        SmtpContent result = null;
-        try {
-            if (frame.equals(DOT_CRLF_DELIMITER)) {
-                this.contentExpected = false;
-                result = DefaultLastSmtpContent.newInstance(frame.retain());
-            } else {
-                result = DefaultSmtpContent.newInstance(frame.retain());
-            }
-            ctx.fireChannelRead(result);
-        } catch (Exception e) {
-            if (!Objects.isNull(result)) {
-                result.recycle();
-            }
+        DefaultSmtpContent result;
+        if (frame.equals(DOT_CRLF_DELIMITER)) {
+            this.contentExpected = false;
+            result = DefaultLastSmtpContent.newInstance(frame.retain());
+        } else {
+            result = DefaultSmtpContent.newInstance(frame.retain());
         }
+        ctx.fireChannelRead(result);
     }
 
     private void readRequest(ChannelHandlerContext ctx, ByteBuf frame) {
@@ -73,7 +65,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
     private DefaultSmtpRequest parseLine(ByteBuf frame) throws InvalidProtocolException {
         int readable = frame.readableBytes();
-        if (readable < 5) {
+        if (readable < 6) {
             throw EXCEPTION_UNKNOWN_COMMAND;
         }
         CharSequence detail = frame.isReadable() ? frame.toString(CharsetUtil.US_ASCII) : null;
@@ -86,17 +78,13 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
         return DefaultSmtpRequest.newInstance(SmtpCommand.valueOf(command), parameters);
     }
 
-    private CharSequence getCommand(@NotNull CharSequence line) throws InvalidProtocolException {
-        if (line.length() < 4) {
-            throw EXCEPTION_UNKNOWN_COMMAND;
-        }
+    private CharSequence getCommand(CharSequence line) {
         final CharSequence command = line.subSequence(0, 4);
         return AsciiString.of(command).toUpperCase();
     }
 
-    private CharSequence[] getParameters(@NotNull CharSequence line, @NotNull CharSequence command) throws InvalidProtocolException {
-        ObjectUtil.checkNotNull(line, "Invalid protocol: null line");
-        if (line.length() == 4) {
+    private CharSequence[] getParameters(CharSequence line, CharSequence command) throws InvalidProtocolException {
+        if (line.length() == 6) {
             return EMPTY_CHAR_SEQUENCE;
         }
         CommandParser parser = commandMap.getParser(command);
