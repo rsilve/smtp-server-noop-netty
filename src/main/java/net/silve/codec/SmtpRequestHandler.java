@@ -41,8 +41,8 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) {
-        if (msg instanceof SmtpRequest) {
-            readRequest(ctx, (SmtpRequest) msg);
+        if (msg instanceof DefaultSmtpRequest) {
+            readRequest(ctx, (DefaultSmtpRequest) msg);
         } else {
             readContent(ctx, msg);
         }
@@ -59,7 +59,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         ((SmtpContent) msg).recycle();
     }
 
-    private void readRequest(ChannelHandlerContext ctx, SmtpRequest request) {
+    private void readRequest(ChannelHandlerContext ctx, DefaultSmtpRequest request) {
         final SmtpCommand command = request.command();
         final CommandHandler commandHandler = commandMap.getHandler(command.name());
         try {
