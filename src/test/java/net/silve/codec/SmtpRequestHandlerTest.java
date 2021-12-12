@@ -1,9 +1,12 @@
 package net.silve.codec;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import org.junit.jupiter.api.Test;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,6 +41,16 @@ class SmtpRequestHandlerTest {
     }
 
     @Test
+    void shouldReturnResponseOnInvalidCommand002() {
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_GREETING, response);
+        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
+        response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, response);
+    }
+
+    @Test
     void shouldReturnResponseOnUnknownCommand() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
         SmtpResponse response = channel.readOutbound();
@@ -47,4 +60,32 @@ class SmtpRequestHandlerTest {
         assertEquals(ConstantResponse.RESPONSE_UNKNOWN_COMMAND, response);
     }
 
+    @Test
+    void shouldReturnResponseOnLastContent() {
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_GREETING, response);
+        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(DefaultLastSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));
+        channel.readOutbound();
+        channel.readOutbound();
+        response = channel.readOutbound();
+        assertEquals(250, response.code());
+        assertTrue(response.details().get(0).toString().startsWith("Ok queued"));
+    }
+
+    @Test
+    void shouldNotReturnResponseOnContent() {
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_GREETING, response);
+        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(DefaultSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));
+        channel.readOutbound();
+        channel.readOutbound();
+        response = channel.readOutbound();
+        assertNull(response);
+    }
 }

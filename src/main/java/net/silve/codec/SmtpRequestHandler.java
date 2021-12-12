@@ -4,16 +4,18 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.codec.command.CommandMap;
 import net.silve.codec.command.handler.CommandHandler;
+import net.silve.codec.command.handler.DataContentHandler;
 import net.silve.codec.command.handler.HandlerResult;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.session.MessageSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 
 /**
@@ -49,12 +51,19 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     }
 
     private void readContent(ChannelHandlerContext ctx, Object msg) {
-        // ignore content
-        if (msg instanceof LastSmtpContent) {
-            ctx.writeAndFlush(new DefaultSmtpResponse(250, String.format("Ok queued as %s", messageSession.getId())));
-            messageSession.completed();
+        DataContentHandler contentHandler = DataContentHandler.singleton();
+        try {
+            HandlerResult result = contentHandler.handle(msg, messageSession);
+            if (!Objects.isNull(result)) {
+                ctx.writeAndFlush(result.getResponse());
+            }
+        } catch (InvalidProtocolException e) {
+            ctx.writeAndFlush(e.getResponse());
+        } finally {
+            if (msg instanceof SmtpContent) {
+                ((SmtpContent) msg).recycle();
+            }
         }
-        ((SmtpContent) msg).recycle();
     }
 
     private void readRequest(ChannelHandlerContext ctx, DefaultSmtpRequest request) {
