@@ -10,16 +10,24 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import net.silve.codec.ssl.SslUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import picocli.CommandLine;
 
+import java.util.concurrent.Callable;
 
-public class SmtpServer {
+@CommandLine.Command(name = "smtp-noop", mixinStandardHelpOptions = true,
+        description = "black hole email server")
+public class SmtpServer implements Callable<Integer> {
 
     private static final Logger logger = LoggerFactory.getLogger(SmtpServer.class);
 
-    private final int port;
+    @CommandLine.Option(names = {"-p", "--port"}, paramLabel = "port",
+            description = "listening port (default: ${DEFAULT-VALUE})")
+    int port = 2525;
 
-    public SmtpServer(int port) {
-        this.port = port;
+    @Override
+    public Integer call() throws Exception {
+        run();
+        return 0;
     }
 
     public void run() throws InterruptedException {
@@ -39,8 +47,8 @@ public class SmtpServer {
                     .childOption(ChannelOption.SO_LINGER, 0);
 
 
-            ChannelFuture f = b.bind(port).sync();
-            logger.info("Listening to {}", port);
+            ChannelFuture f = b.bind(this.port).sync();
+            logger.info("Listening to {}", this.port);
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully
             // shut down your server.
@@ -50,14 +58,4 @@ public class SmtpServer {
             bossGroup.shutdownGracefully();
         }
     }
-
-    public static void main(String[] args) throws InterruptedException {
-        int port = 2525;
-        if (args.length > 0) {
-            port = Integer.parseInt(args[0]);
-        }
-
-        new SmtpServer(port).run();
-    }
-
 }
