@@ -36,8 +36,6 @@ public class SmtpResponseEncoder extends MessageToMessageEncoder<SmtpResponse> {
             }
             list.add(buffer);
             release = false;
-        } catch (Exception e) {
-            e.printStackTrace();
         } finally {
             if (release) {
                 buffer.release();

@@ -94,12 +94,4 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         messageSession.recycle();
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
-        logger.warn("[{}] Last command was {}", messageSession.getId(), messageSession.getLastCommand());
-        ctx.close();
-    }
-
-
 }
