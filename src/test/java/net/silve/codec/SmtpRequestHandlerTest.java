@@ -37,4 +37,14 @@ class SmtpRequestHandlerTest {
         assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, response);
     }
 
+    @Test
+    void shouldReturnResponseOnUnknownCommand() {
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_GREETING, response);
+        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.valueOf("FOO"))));
+        response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_UNKNOWN_COMMAND, response);
+    }
+
 }

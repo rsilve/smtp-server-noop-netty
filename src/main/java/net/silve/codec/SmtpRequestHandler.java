@@ -51,18 +51,16 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     private void readContent(ChannelHandlerContext ctx, Object msg) {
         // ignore content
         if (msg instanceof LastSmtpContent) {
-            ctx.writeAndFlush(new DefaultSmtpResponse(250, String.format("Ok queued as %s",
-                    messageSession.getId()
-            )));
+            ctx.writeAndFlush(new DefaultSmtpResponse(250, String.format("Ok queued as %s", messageSession.getId())));
             messageSession.completed();
         }
         ((SmtpContent) msg).recycle();
     }
 
     private void readRequest(ChannelHandlerContext ctx, DefaultSmtpRequest request) {
-        final SmtpCommand command = request.command();
-        final CommandHandler commandHandler = commandMap.getHandler(command.name());
         try {
+            final SmtpCommand command = request.command();
+            final CommandHandler commandHandler = commandMap.getHandler(command.name());
             HandlerResult result = commandHandler.response(request, messageSession);
             messageSession.setLastCommand(command);
             result.getAction().execute(ctx);
@@ -72,11 +70,9 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
                 channelFuture.addListener(ChannelFutureListener.CLOSE);
             }
         } catch (InvalidProtocolException e) {
-            logger.error("Protocol error", e);
             ctx.writeAndFlush(e.getResponse());
         } catch (Exception e) {
-            logger.error("error", e);
-            ctx.writeAndFlush(e.getMessage());
+            ctx.writeAndFlush(ConstantResponse.RESPONSE_UNKNOWN_COMMAND);
         } finally {
             request.recycle();
         }
