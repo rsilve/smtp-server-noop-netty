@@ -2,8 +2,8 @@ package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
-import net.silve.codec.ConstantResponse;
-import net.silve.codec.DefaultSmtpRequest;
+import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +23,7 @@ class RcptHandlerTest {
     void shouldThrowExceptionIfTransactionNotStarted() {
         try {
             RcptHandler.singleton()
-                    .handle(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT), MessageSession.newInstance());
+                    .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), MessageSession.newInstance());
             fail();
         } catch (InvalidProtocolException e) {
             assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, e.getResponse());
@@ -38,7 +38,7 @@ class RcptHandlerTest {
                 list.add(AsciiString.of(String.valueOf(i)));
             }
             RcptHandler.singleton()
-                    .handle(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT),
+                    .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT),
                             MessageSession.newInstance().setTransactionStarted(true).setForwardPath(list));
             fail();
         } catch (InvalidProtocolException e) {
@@ -50,7 +50,7 @@ class RcptHandlerTest {
     void shouldThrowExceptionIfNoRecipient() {
         try {
             RcptHandler.singleton()
-                    .handle(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT),
+                    .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT),
                             MessageSession.newInstance().setTransactionStarted(true));
             fail();
         } catch (InvalidProtocolException e) {
@@ -61,7 +61,7 @@ class RcptHandlerTest {
     @Test
     void shouldReturnResponse() throws InvalidProtocolException {
         HandlerResult handle = RcptHandler.singleton()
-                .handle(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT, "recipient"),
+                .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "recipient"),
                         MessageSession.newInstance().setTransactionStarted(true));
         assertEquals(ConstantResponse.RESPONSE_RCPT_OK, handle.getResponse());
     }

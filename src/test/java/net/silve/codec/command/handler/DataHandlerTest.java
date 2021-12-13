@@ -2,8 +2,8 @@ package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
-import net.silve.codec.ConstantResponse;
-import net.silve.codec.DefaultSmtpRequest;
+import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ class DataHandlerTest {
     void shouldReturnResponse() {
         try {
             DataHandler.singleton()
-                    .handle(DefaultSmtpRequest.newInstance(SmtpCommand.DATA), MessageSession.newInstance());
+                    .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA), MessageSession.newInstance());
             fail();
         } catch (InvalidProtocolException e) {
             assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, e.getResponse());
@@ -33,7 +33,7 @@ class DataHandlerTest {
     void shouldThrowExceptionIfTransactionAlreadStarted() {
         try {
             DataHandler.singleton()
-                    .handle(DefaultSmtpRequest.newInstance(SmtpCommand.DATA),
+                    .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA),
                             MessageSession.newInstance().setTransactionStarted(true));
             fail();
         } catch (InvalidProtocolException e) {
@@ -45,7 +45,7 @@ class DataHandlerTest {
     void shouldThrowExceptionRequestParameterIsEmpty() throws InvalidProtocolException {
 
         HandlerResult handle = DataHandler.singleton()
-                .handle(DefaultSmtpRequest.newInstance(SmtpCommand.DATA),
+                .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA),
                         MessageSession.newInstance().setTransactionStarted(true).addForwardPath(AsciiString.of("ee"))
                 );
         assertEquals(ConstantResponse.RESPONSE_END_DATA_MESSAGE, handle.getResponse());

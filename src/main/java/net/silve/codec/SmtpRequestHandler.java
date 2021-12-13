@@ -4,16 +4,21 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.codec.command.CommandMap;
 import net.silve.codec.command.handler.CommandHandler;
+import net.silve.codec.command.handler.DataContentHandler;
 import net.silve.codec.command.handler.HandlerResult;
 import net.silve.codec.command.handler.InvalidProtocolException;
+import net.silve.codec.request.RecyclableSmtpContent;
+import net.silve.codec.request.RecyclableSmtpRequest;
+import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 
 /**
@@ -41,30 +46,35 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) {
-        if (msg instanceof SmtpRequest) {
-            readRequest(ctx, (SmtpRequest) msg);
+        if (msg instanceof RecyclableSmtpRequest) {
+            readRequest(ctx, (RecyclableSmtpRequest) msg);
         } else {
             readContent(ctx, msg);
         }
     }
 
     private void readContent(ChannelHandlerContext ctx, Object msg) {
-        // ignore content
-        if (msg instanceof LastSmtpContent) {
-            ctx.writeAndFlush(new DefaultSmtpResponse(250, String.format("Ok queued as %s",
-                    messageSession.getId()
-            )));
-            messageSession.completed();
+        DataContentHandler contentHandler = DataContentHandler.singleton();
+        try {
+            HandlerResult result = contentHandler.handle(msg, messageSession);
+            if (!Objects.isNull(result)) {
+                ctx.writeAndFlush(result.getResponse());
+            }
+        } catch (InvalidProtocolException e) {
+            ctx.writeAndFlush(e.getResponse());
+        } finally {
+            if (msg instanceof RecyclableSmtpContent) {
+                ((RecyclableSmtpContent) msg).recycle();
+            }
         }
-        ((SmtpContent) msg).recycle();
     }
 
-    private void readRequest(ChannelHandlerContext ctx, SmtpRequest request) {
-        final SmtpCommand command = request.command();
-        final CommandHandler commandHandler = commandMap.getHandler(command.name());
+    private void readRequest(ChannelHandlerContext ctx, RecyclableSmtpRequest request) {
         try {
+            final SmtpCommand command = request.command();
+            final CommandHandler commandHandler = commandMap.getHandler(command.name());
             HandlerResult result = commandHandler.response(request, messageSession);
-            messageSession.setLastCommand(command);
+            result.getSessionAction().execute(messageSession);
             result.getAction().execute(ctx);
             logger.trace("[{}] Request: {}, Response: {}", messageSession.getId(), request, result.getResponse());
             final ChannelFuture channelFuture = ctx.writeAndFlush(result.getResponse());
@@ -72,11 +82,9 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
                 channelFuture.addListener(ChannelFutureListener.CLOSE);
             }
         } catch (InvalidProtocolException e) {
-            logger.error("Protocol error", e);
             ctx.writeAndFlush(e.getResponse());
         } catch (Exception e) {
-            logger.error("error", e);
-            ctx.writeAndFlush(e.getMessage());
+            ctx.writeAndFlush(ConstantResponse.RESPONSE_UNKNOWN_COMMAND);
         } finally {
             request.recycle();
         }
