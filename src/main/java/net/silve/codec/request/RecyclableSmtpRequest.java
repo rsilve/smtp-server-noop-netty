@@ -1,4 +1,4 @@
-package net.silve.codec;
+package net.silve.codec.request;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpRequest;

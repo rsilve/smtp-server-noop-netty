@@ -2,8 +2,8 @@ package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
-import net.silve.codec.ConstantResponse;
-import net.silve.codec.RecyclableSmtpRequest;
+import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 

@@ -2,7 +2,7 @@ package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
-import net.silve.codec.ConstantResponse;
+import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import org.junit.jupiter.api.Test;
 

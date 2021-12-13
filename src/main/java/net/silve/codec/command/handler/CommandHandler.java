@@ -1,6 +1,6 @@
 package net.silve.codec.command.handler;
 
-import net.silve.codec.RecyclableSmtpRequest;
+import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.jetbrains.annotations.NotNull;
 

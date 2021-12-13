@@ -1,10 +1,9 @@
-package net.silve.codec;
+package net.silve.codec.request;
 
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.smtp.SmtpContent;
 import io.netty.util.Recycler;
-import net.silve.codec.utils.RecyclableByteBufHolder;
 
 import java.util.Objects;
 

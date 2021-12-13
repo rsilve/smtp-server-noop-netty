@@ -3,7 +3,7 @@ package net.silve.tools;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import net.silve.codec.RecyclableSmtpRequest;
+import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.command.handler.CommandHandler;
 import net.silve.codec.command.handler.HandlerResult;
 import net.silve.codec.command.handler.InvalidProtocolException;

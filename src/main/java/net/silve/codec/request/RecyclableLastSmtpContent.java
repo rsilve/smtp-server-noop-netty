@@ -1,4 +1,4 @@
-package net.silve.codec;
+package net.silve.codec.request;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.smtp.LastSmtpContent;

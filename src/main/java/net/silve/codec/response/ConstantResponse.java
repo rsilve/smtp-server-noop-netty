@@ -1,4 +1,4 @@
-package net.silve.codec;
+package net.silve.codec.response;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;

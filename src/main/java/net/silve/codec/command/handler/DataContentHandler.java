@@ -1,8 +1,8 @@
 package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
-import net.silve.codec.ConstantResponse;
-import net.silve.codec.RecyclableLastSmtpContent;
+import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.session.MessageSession;
 import org.jetbrains.annotations.NotNull;
 

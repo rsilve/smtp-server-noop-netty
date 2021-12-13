@@ -3,8 +3,8 @@ package net.silve.codec.command.handler;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
-import net.silve.codec.ConstantResponse;
-import net.silve.codec.RecyclableSmtpRequest;
+import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.jetbrains.annotations.NotNull;
 
