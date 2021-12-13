@@ -31,7 +31,10 @@ public class RecyclableSmtpContent extends RecyclableByteBufHolder implements Sm
     }
 
     public void recycle() {
-        this.release();
+        boolean released = this.release();
+        if (!released) {
+            throw new RuntimeException("Fail to release object");
+        }
         handle.recycle(this);
     }
 

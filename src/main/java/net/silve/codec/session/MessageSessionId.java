@@ -9,10 +9,12 @@ import java.util.Date;
 
 public class MessageSessionId {
 
-    private MessageSessionId() {}
+    private static final SecureRandom random = new SecureRandom();
+
+    private MessageSessionId() {
+    }
 
     public static AsciiString generate() {
-        SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[64];
         random.nextBytes(new byte[64]);
         final String salt = Base64.getEncoder().encodeToString(bytes);

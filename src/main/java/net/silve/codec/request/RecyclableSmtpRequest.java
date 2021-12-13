@@ -7,6 +7,7 @@ import io.netty.util.internal.ObjectUtil;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public final class RecyclableSmtpRequest implements SmtpRequest {
 
@@ -51,22 +52,23 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
         return this.parameters;
     }
 
-    public int hashCode() {
-        return this.command.hashCode() * 31 + this.parameters.hashCode();
-    }
-
+    @Override
     public boolean equals(Object o) {
-        if (!(o instanceof io.netty.handler.codec.smtp.DefaultSmtpRequest)) {
-            return false;
-        } else if (o == this) {
-            return true;
-        } else {
-            io.netty.handler.codec.smtp.DefaultSmtpRequest other = (io.netty.handler.codec.smtp.DefaultSmtpRequest) o;
-            return this.command().equals(other.command()) && this.parameters().equals(other.parameters());
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RecyclableSmtpRequest that = (RecyclableSmtpRequest) o;
+
+        if (!handle.equals(that.handle)) return false;
+        if (!command.equals(that.command)) return false;
+        return Objects.equals(parameters, that.parameters);
     }
 
-    public String toString() {
-        return "DefaultSmtpRequest{command=" + this.command + ", parameters=" + this.parameters + '}';
+    @Override
+    public int hashCode() {
+        int result = handle.hashCode();
+        result = 31 * result + command.hashCode();
+        result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
+        return result;
     }
 }
