@@ -1,38 +1,40 @@
 package net.silve.codec;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
+import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.util.Recycler;
 import io.netty.util.internal.ObjectUtil;
 
 import java.util.Collections;
 import java.util.List;
 
-public final class DefaultSmtpRequest implements SmtpRequest {
+public final class RecyclableSmtpRequest implements SmtpRequest {
 
-    private static final Recycler<DefaultSmtpRequest> RECYCLER = new Recycler<>() {
-        protected DefaultSmtpRequest newObject(Recycler.Handle<DefaultSmtpRequest> handle) {
-            return new DefaultSmtpRequest(handle);
+    private static final Recycler<RecyclableSmtpRequest> RECYCLER = new Recycler<>() {
+        protected RecyclableSmtpRequest newObject(Recycler.Handle<RecyclableSmtpRequest> handle) {
+            return new RecyclableSmtpRequest(handle);
         }
     };
+    private final Recycler.Handle<RecyclableSmtpRequest> handle;
+    private SmtpCommand command;
+    private List<CharSequence> parameters;
 
-    public static DefaultSmtpRequest newInstance(SmtpCommand command) {
-        DefaultSmtpRequest obj = RECYCLER.get();
+    private RecyclableSmtpRequest(Recycler.Handle<RecyclableSmtpRequest> handle) {
+        this.handle = handle;
+    }
+
+    public static RecyclableSmtpRequest newInstance(SmtpCommand command) {
+        RecyclableSmtpRequest obj = RECYCLER.get();
         obj.command = ObjectUtil.checkNotNull(command, "command");
         obj.parameters = Collections.emptyList();
         return obj;
     }
 
-    public static DefaultSmtpRequest newInstance(SmtpCommand command, CharSequence... parameters) {
-        DefaultSmtpRequest obj = RECYCLER.get();
+    public static RecyclableSmtpRequest newInstance(SmtpCommand command, CharSequence... parameters) {
+        RecyclableSmtpRequest obj = RECYCLER.get();
         obj.command = ObjectUtil.checkNotNull(command, "command");
         obj.parameters = SmtpUtils.toUnmodifiableList(parameters);
         return obj;
-    }
-
-    private final Recycler.Handle<DefaultSmtpRequest> handle;
-
-    private DefaultSmtpRequest(Recycler.Handle<DefaultSmtpRequest> handle) {
-        this.handle = handle;
     }
 
     public void recycle() {
@@ -40,10 +42,6 @@ public final class DefaultSmtpRequest implements SmtpRequest {
         this.parameters = null;
         handle.recycle(this);
     }
-
-
-    private SmtpCommand command;
-    private List<CharSequence> parameters;
 
     public SmtpCommand command() {
         return this.command;
@@ -63,7 +61,7 @@ public final class DefaultSmtpRequest implements SmtpRequest {
         } else if (o == this) {
             return true;
         } else {
-            io.netty.handler.codec.smtp.DefaultSmtpRequest other = (io.netty.handler.codec.smtp.DefaultSmtpRequest)o;
+            io.netty.handler.codec.smtp.DefaultSmtpRequest other = (io.netty.handler.codec.smtp.DefaultSmtpRequest) o;
             return this.command().equals(other.command()) && this.parameters().equals(other.parameters());
         }
     }

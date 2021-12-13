@@ -4,7 +4,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
 import net.silve.codec.ConstantResponse;
-import net.silve.codec.SmtpRequest;
+import net.silve.codec.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +24,8 @@ public class MailHandler implements CommandHandler {
     }
 
     @Override
-    public @NotNull HandlerResult handle(@NotNull SmtpRequest request, @NotNull final MessageSession session) throws InvalidProtocolException {
+    public @NotNull
+    HandlerResult handle(RecyclableSmtpRequest request, @NotNull final MessageSession session) throws InvalidProtocolException {
         if (session.isTransactionStarted()) {
             throw new InvalidProtocolException(ConstantResponse.RESPONSE_SENDER_ALREADY_SPECIFIED);
         }
@@ -34,9 +35,10 @@ public class MailHandler implements CommandHandler {
         }
 
         final CharSequence reversePath = request.parameters().get(0);
-        session.setReversePath(AsciiString.of(reversePath));
-        session.setTransactionStarted(true);
-        return HandlerResult.from(ConstantResponse.RESPONSE_MAIL_FROM_OK);
+        return new HandlerResult(ConstantResponse.RESPONSE_MAIL_FROM_OK, (MessageSession session1) -> {
+            session1.setReversePath(AsciiString.of(reversePath));
+            session1.setTransactionStarted(true);
+        });
 
     }
 }

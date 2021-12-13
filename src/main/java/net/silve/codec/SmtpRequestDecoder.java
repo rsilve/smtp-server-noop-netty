@@ -41,19 +41,19 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     private void readContent(ChannelHandlerContext ctx, ByteBuf frame) {
-        DefaultSmtpContent result;
+        RecyclableSmtpContent result;
         if (frame.equals(DOT_CRLF_DELIMITER)) {
             this.contentExpected = false;
-            result = DefaultLastSmtpContent.newInstance(frame.retain());
+            result = RecyclableLastSmtpContent.newInstance(frame.retain());
         } else {
-            result = DefaultSmtpContent.newInstance(frame.retain());
+            result = RecyclableSmtpContent.newInstance(frame.retain());
         }
         ctx.fireChannelRead(result);
     }
 
     private void readRequest(ChannelHandlerContext ctx, ByteBuf frame) {
         try {
-            DefaultSmtpRequest request = parseLine(frame);
+            RecyclableSmtpRequest request = parseLine(frame);
             if (SmtpCommand.DATA.equals(request.command())) {
                 this.contentExpected = true;
             }
@@ -63,7 +63,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
         }
     }
 
-    private DefaultSmtpRequest parseLine(ByteBuf frame) throws InvalidProtocolException {
+    private RecyclableSmtpRequest parseLine(ByteBuf frame) throws InvalidProtocolException {
         int readable = frame.readableBytes();
         if (readable < 6) {
             throw EXCEPTION_UNKNOWN_COMMAND;
@@ -75,7 +75,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
         final CharSequence command = getCommand(detail);
         final CharSequence[] parameters = getParameters(detail, command);
-        return DefaultSmtpRequest.newInstance(SmtpCommand.valueOf(command), parameters);
+        return RecyclableSmtpRequest.newInstance(SmtpCommand.valueOf(command), parameters);
     }
 
     private CharSequence getCommand(CharSequence line) {

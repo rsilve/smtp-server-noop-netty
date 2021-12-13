@@ -25,7 +25,7 @@ class SmtpRequestHandlerTest {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
         SmtpResponse response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_GREETING, response);
-        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.HELO)));
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO)));
         response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_HELO, response);
     }
@@ -35,7 +35,7 @@ class SmtpRequestHandlerTest {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
         SmtpResponse response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_GREETING, response);
-        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL)));
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL)));
         response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, response);
     }
@@ -45,7 +45,7 @@ class SmtpRequestHandlerTest {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
         SmtpResponse response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_GREETING, response);
-        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
         response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, response);
     }
@@ -55,7 +55,7 @@ class SmtpRequestHandlerTest {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
         SmtpResponse response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_GREETING, response);
-        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.valueOf("FOO"))));
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.valueOf("FOO"))));
         response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_UNKNOWN_COMMAND, response);
     }
@@ -65,9 +65,9 @@ class SmtpRequestHandlerTest {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
         SmtpResponse response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_GREETING, response);
-        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
-        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
-        assertFalse(channel.writeInbound(DefaultLastSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));
         channel.readOutbound();
         channel.readOutbound();
         response = channel.readOutbound();
@@ -80,9 +80,9 @@ class SmtpRequestHandlerTest {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
         SmtpResponse response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_GREETING, response);
-        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
-        assertFalse(channel.writeInbound(DefaultSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
-        assertFalse(channel.writeInbound(DefaultSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));
         channel.readOutbound();
         channel.readOutbound();
         response = channel.readOutbound();

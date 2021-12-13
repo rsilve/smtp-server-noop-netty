@@ -2,7 +2,7 @@ package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.ConstantResponse;
-import net.silve.codec.DefaultSmtpRequest;
+import net.silve.codec.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ class RSETHandlerTest {
 
     @Test
     void shouldExecute() {
-        HandlerResult handle = new RSETHandler().handle(DefaultSmtpRequest.newInstance(SmtpCommand.EHLO), MessageSession.newInstance());
+        HandlerResult handle = new RSETHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO), MessageSession.newInstance());
         assertEquals(ConstantResponse.RESPONSE_RSET_OK, handle.getResponse());
     }
 

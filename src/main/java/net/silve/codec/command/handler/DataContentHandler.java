@@ -2,7 +2,7 @@ package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import net.silve.codec.ConstantResponse;
-import net.silve.codec.LastSmtpContent;
+import net.silve.codec.RecyclableLastSmtpContent;
 import net.silve.codec.session.MessageSession;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,9 +23,11 @@ public class DataContentHandler {
             throw new InvalidProtocolException(ConstantResponse.RESPONSE_RECIPIENT_NEEDED);
         }
 
-        if (content instanceof LastSmtpContent) {
+        if (content instanceof RecyclableLastSmtpContent) {
             session.completed();
-            return HandlerResult.from(new DefaultSmtpResponse(250, String.format("Ok queued as %s", session.getId())));
+            return new HandlerResult(
+                    new DefaultSmtpResponse(250, String.format("Ok queued as %s", session.getId())),
+                    MessageSession::completed);
         } else {
             return null;
         }

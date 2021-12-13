@@ -2,31 +2,33 @@ package net.silve.codec;
 
 
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.smtp.SmtpContent;
 import io.netty.util.Recycler;
 import net.silve.codec.utils.RecyclableByteBufHolder;
 
 import java.util.Objects;
 
 
-public class DefaultSmtpContent extends RecyclableByteBufHolder implements SmtpContent {
+public class RecyclableSmtpContent extends RecyclableByteBufHolder implements SmtpContent {
 
-    private static final Recycler<DefaultSmtpContent> RECYCLER = new Recycler<>() {
-        protected DefaultSmtpContent newObject(Recycler.Handle<DefaultSmtpContent> handle) {
-            return new DefaultSmtpContent(handle);
+    private static final Recycler<RecyclableSmtpContent> RECYCLER = new Recycler<>() {
+        protected RecyclableSmtpContent newObject(Recycler.Handle<RecyclableSmtpContent> handle) {
+            return new RecyclableSmtpContent(handle);
         }
     };
+    private Recycler.Handle<RecyclableSmtpContent> handle;
 
-    public static DefaultSmtpContent newInstance(ByteBuf data) {
-        DefaultSmtpContent obj = RECYCLER.get();
-        obj.content(data);
-        return obj;
+    protected RecyclableSmtpContent() {
     }
 
-    private Recycler.Handle<DefaultSmtpContent> handle;
-
-    protected DefaultSmtpContent() {}
-    protected DefaultSmtpContent(Recycler.Handle<DefaultSmtpContent> handle) {
+    protected RecyclableSmtpContent(Recycler.Handle<RecyclableSmtpContent> handle) {
         this.handle = handle;
+    }
+
+    public static RecyclableSmtpContent newInstance(ByteBuf data) {
+        RecyclableSmtpContent obj = RECYCLER.get();
+        obj.content(data);
+        return obj;
     }
 
     public void recycle() {
@@ -34,39 +36,45 @@ public class DefaultSmtpContent extends RecyclableByteBufHolder implements SmtpC
         handle.recycle(this);
     }
 
-
-
+    @Override
     public SmtpContent copy() {
-        return (SmtpContent)super.copy();
+        return (SmtpContent) super.copy();
     }
 
+    @Override
     public SmtpContent duplicate() {
-        return (SmtpContent)super.duplicate();
+        return (SmtpContent) super.duplicate();
     }
 
+    @Override
     public SmtpContent retainedDuplicate() {
-        return (SmtpContent)super.retainedDuplicate();
+        return (SmtpContent) super.retainedDuplicate();
     }
 
+    @Override
     public SmtpContent replace(ByteBuf content) {
-        return DefaultSmtpContent.newInstance(content);
+        return RecyclableSmtpContent.newInstance(content);
     }
 
+    @Override
     public SmtpContent retain() {
         super.retain();
         return this;
     }
 
+    @Override
     public SmtpContent retain(int increment) {
         super.retain(increment);
         return this;
     }
 
+    @Override
     public SmtpContent touch() {
         super.touch();
         return this;
     }
 
+    @Override
     public SmtpContent touch(Object hint) {
         super.touch(hint);
         return this;
@@ -75,10 +83,10 @@ public class DefaultSmtpContent extends RecyclableByteBufHolder implements SmtpC
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DefaultSmtpContent)) return false;
+        if (!(o instanceof RecyclableSmtpContent)) return false;
         if (!super.equals(o)) return false;
 
-        DefaultSmtpContent that = (DefaultSmtpContent) o;
+        RecyclableSmtpContent that = (RecyclableSmtpContent) o;
         return Objects.equals(handle, that.handle);
     }
 

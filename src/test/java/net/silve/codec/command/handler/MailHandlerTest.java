@@ -2,7 +2,7 @@ package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.ConstantResponse;
-import net.silve.codec.DefaultSmtpRequest;
+import net.silve.codec.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -19,15 +19,15 @@ class MailHandlerTest {
 
     @Test
     void shouldReturnResponse() throws InvalidProtocolException {
-        HandlerResult handle = new MailHandler().handle(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"), MessageSession.newInstance());
+        HandlerResult handle = new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"), MessageSession.newInstance());
         assertEquals(ConstantResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
     }
 
     @Test
-    void shouldThrowExceptionIfTransactionAlreadStarted()  {
+    void shouldThrowExceptionIfTransactionAlreadStarted() {
         try {
             HandlerResult handle = new MailHandler()
-                    .handle(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"),
+                    .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"),
                             MessageSession.newInstance().setTransactionStarted(true));
             assertEquals(ConstantResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
             fail();
@@ -37,10 +37,10 @@ class MailHandlerTest {
     }
 
     @Test
-    void shouldThrowExceptionRequestParameterIsEmpty()  {
+    void shouldThrowExceptionRequestParameterIsEmpty() {
         try {
             HandlerResult handle = new MailHandler()
-                    .handle(DefaultSmtpRequest.newInstance(SmtpCommand.MAIL),
+                    .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL),
                             MessageSession.newInstance());
             assertEquals(ConstantResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
             fail();

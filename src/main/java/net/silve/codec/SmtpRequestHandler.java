@@ -43,8 +43,8 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) {
-        if (msg instanceof DefaultSmtpRequest) {
-            readRequest(ctx, (DefaultSmtpRequest) msg);
+        if (msg instanceof RecyclableSmtpRequest) {
+            readRequest(ctx, (RecyclableSmtpRequest) msg);
         } else {
             readContent(ctx, msg);
         }
@@ -60,18 +60,18 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         } catch (InvalidProtocolException e) {
             ctx.writeAndFlush(e.getResponse());
         } finally {
-            if (msg instanceof SmtpContent) {
-                ((SmtpContent) msg).recycle();
+            if (msg instanceof RecyclableSmtpContent) {
+                ((RecyclableSmtpContent) msg).recycle();
             }
         }
     }
 
-    private void readRequest(ChannelHandlerContext ctx, DefaultSmtpRequest request) {
+    private void readRequest(ChannelHandlerContext ctx, RecyclableSmtpRequest request) {
         try {
             final SmtpCommand command = request.command();
             final CommandHandler commandHandler = commandMap.getHandler(command.name());
             HandlerResult result = commandHandler.response(request, messageSession);
-            messageSession.setLastCommand(command);
+            result.getSessionAction().execute(messageSession);
             result.getAction().execute(ctx);
             logger.trace("[{}] Request: {}, Response: {}", messageSession.getId(), request, result.getResponse());
             final ChannelFuture channelFuture = ctx.writeAndFlush(result.getResponse());
