@@ -51,7 +51,6 @@ public class ConstantResponse {
             AsciiString.of("Bye"));
 
     private ConstantResponse() {
-        throw new IllegalStateException("Utility class");
     }
 
 }

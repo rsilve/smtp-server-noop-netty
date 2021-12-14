@@ -6,7 +6,4 @@ public class InvalidSyntaxException extends Exception {
         super(message);
     }
 
-    public InvalidSyntaxException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }
