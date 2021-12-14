@@ -4,13 +4,14 @@ import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.util.Recycler;
 import io.netty.util.internal.ObjectUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public final class RecyclableSmtpRequest implements SmtpRequest {
 
+    public static final String COMMAND_SHOULD_NOT_BE_NULL = "command should not be null";
     private static final Recycler<RecyclableSmtpRequest> RECYCLER = new Recycler<>() {
         protected RecyclableSmtpRequest newObject(Recycler.Handle<RecyclableSmtpRequest> handle) {
             return new RecyclableSmtpRequest(handle);
@@ -24,16 +25,16 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
         this.handle = handle;
     }
 
-    public static RecyclableSmtpRequest newInstance(SmtpCommand command) {
+    public static RecyclableSmtpRequest newInstance(@NotNull SmtpCommand command) {
         RecyclableSmtpRequest obj = RECYCLER.get();
-        obj.command = ObjectUtil.checkNotNull(command, "command");
+        obj.command = ObjectUtil.checkNotNull(command, COMMAND_SHOULD_NOT_BE_NULL);
         obj.parameters = Collections.emptyList();
         return obj;
     }
 
-    public static RecyclableSmtpRequest newInstance(SmtpCommand command, CharSequence... parameters) {
+    public static RecyclableSmtpRequest newInstance(@NotNull SmtpCommand command, CharSequence... parameters) {
         RecyclableSmtpRequest obj = RECYCLER.get();
-        obj.command = ObjectUtil.checkNotNull(command, "command");
+        obj.command = ObjectUtil.checkNotNull(command, COMMAND_SHOULD_NOT_BE_NULL);
         obj.parameters = SmtpUtils.toUnmodifiableList(parameters);
         return obj;
     }
@@ -52,23 +53,4 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
         return this.parameters;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        RecyclableSmtpRequest that = (RecyclableSmtpRequest) o;
-
-        if (!handle.equals(that.handle)) return false;
-        if (!command.equals(that.command)) return false;
-        return Objects.equals(parameters, that.parameters);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = handle.hashCode();
-        result = 31 * result + command.hashCode();
-        result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
-        return result;
-    }
 }
