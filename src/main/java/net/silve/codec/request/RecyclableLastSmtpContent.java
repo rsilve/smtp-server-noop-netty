@@ -5,6 +5,8 @@ import io.netty.handler.codec.smtp.LastSmtpContent;
 import io.netty.util.IllegalReferenceCountException;
 import io.netty.util.Recycler;
 
+import javax.annotation.Nonnull;
+
 public final class RecyclableLastSmtpContent extends RecyclableSmtpContent implements LastSmtpContent {
 
     private static final Recycler<RecyclableLastSmtpContent> RECYCLER = new Recycler<>() {
@@ -19,7 +21,7 @@ public final class RecyclableLastSmtpContent extends RecyclableSmtpContent imple
         this.handle = handle;
     }
 
-    public static RecyclableLastSmtpContent newInstance(ByteBuf data) {
+    public static RecyclableLastSmtpContent newInstance(@Nonnull ByteBuf data) {
         RecyclableLastSmtpContent obj = RECYCLER.get();
         obj.content(data);
         return obj;

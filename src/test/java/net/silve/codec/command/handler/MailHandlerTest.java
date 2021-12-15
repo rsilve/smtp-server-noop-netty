@@ -26,9 +26,7 @@ class MailHandlerTest {
     @Test
     void shouldThrowExceptionIfTransactionAlreadStarted() {
         try {
-            HandlerResult handle = new MailHandler()
-                    .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"),
-                            MessageSession.newInstance().setReversePath());
+            HandlerResult handle = new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"), MessageSession.newInstance().setReversePath());
             assertEquals(ConstantResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
             fail();
         } catch (InvalidProtocolException e) {
@@ -37,11 +35,19 @@ class MailHandlerTest {
     }
 
     @Test
+    void shouldThrowExceptionMailIsEmtpy() {
+        try {
+            new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, ""), MessageSession.newInstance());
+            fail();
+        } catch (InvalidProtocolException e) {
+            assertEquals(ConstantResponse.RESPONSE_BAD_MAIL_SYNTAX, e.getResponse());
+        }
+    }
+
+    @Test
     void shouldThrowExceptionRequestParameterIsEmpty() {
         try {
-            HandlerResult handle = new MailHandler()
-                    .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL),
-                            MessageSession.newInstance());
+            HandlerResult handle = new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL), MessageSession.newInstance());
             assertEquals(ConstantResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
             fail();
         } catch (InvalidProtocolException e) {
