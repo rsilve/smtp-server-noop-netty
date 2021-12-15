@@ -78,16 +78,5 @@ public class RecyclableByteBufHolder implements ByteBufHolder {
     public String toString() {
         return StringUtil.simpleClassName(this) + '(' + this.contentToString() + ')';
     }
-
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else {
-            return o != null && this.getClass() == o.getClass() && this.data.equals(((RecyclableByteBufHolder) o).data);
-        }
-    }
-
-    public int hashCode() {
-        return this.data.hashCode();
-    }
+    
 }

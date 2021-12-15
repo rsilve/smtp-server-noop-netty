@@ -3,9 +3,8 @@ package net.silve.codec.request;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.smtp.SmtpContent;
+import io.netty.util.IllegalReferenceCountException;
 import io.netty.util.Recycler;
-
-import java.util.Objects;
 
 
 public class RecyclableSmtpContent extends RecyclableByteBufHolder implements SmtpContent {
@@ -33,7 +32,7 @@ public class RecyclableSmtpContent extends RecyclableByteBufHolder implements Sm
     public void recycle() {
         boolean released = this.release();
         if (!released) {
-            throw new RuntimeException("Fail to release object");
+            throw new IllegalReferenceCountException("Fail to release object");
         }
         handle.recycle(this);
     }
@@ -82,20 +81,4 @@ public class RecyclableSmtpContent extends RecyclableByteBufHolder implements Sm
         return this;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RecyclableSmtpContent)) return false;
-        if (!super.equals(o)) return false;
-
-        RecyclableSmtpContent that = (RecyclableSmtpContent) o;
-        return Objects.equals(handle, that.handle);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (handle != null ? handle.hashCode() : 0);
-        return result;
-    }
 }
