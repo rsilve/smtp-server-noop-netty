@@ -18,7 +18,7 @@ public class DataContentHandler {
             throw new InvalidProtocolException(ConstantResponse.RESPONSE_SENDER_NEEDED);
         }
 
-        if (session.getForwardPath() == null || session.getForwardPath().isEmpty()) {
+        if (session.needForward()) {
             throw new InvalidProtocolException(ConstantResponse.RESPONSE_RECIPIENT_NEEDED);
         }
 

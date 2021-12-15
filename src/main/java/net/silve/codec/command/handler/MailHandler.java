@@ -33,10 +33,8 @@ public class MailHandler implements CommandHandler {
         }
 
         final CharSequence reversePath = request.parameters().get(0);
-        return new HandlerResult(ConstantResponse.RESPONSE_MAIL_FROM_OK, (MessageSession session1) -> {
-            session1.setReversePath(AsciiString.of(reversePath));
-            session1.setTransactionStarted(true);
-        });
+        return new HandlerResult(ConstantResponse.RESPONSE_MAIL_FROM_OK,
+                (MessageSession session1) -> session1.setReversePath(AsciiString.of(reversePath)));
 
     }
 }

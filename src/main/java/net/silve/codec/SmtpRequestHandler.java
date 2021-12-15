@@ -94,11 +94,6 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        if (messageSession.getCompletedAt() <= 0) {
-            logger.warn("[{}] Last command was {}", messageSession.getId(), messageSession.getLastCommand());
-        } else {
-            logger.info("[{}] completed", messageSession.getId());
-        }
         messageSession.recycle();
     }
 

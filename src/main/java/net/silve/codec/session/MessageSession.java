@@ -1,6 +1,5 @@
 package net.silve.codec.session;
 
-import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
 import io.netty.util.Recycler;
 
@@ -15,6 +14,17 @@ public class MessageSession {
             return new MessageSession(handle);
         }
     };
+    private final Recycler.Handle<MessageSession> handle;
+    private AsciiString id = MessageSessionId.generate();
+    private AsciiString reversePath = AsciiString.EMPTY_STRING;
+    private List<AsciiString> forwardPath = new ArrayList<>();
+    private boolean transactionStarted = false;
+    private long startedAt = System.nanoTime();
+    private long completedAt = 0L;
+
+    private MessageSession(Recycler.Handle<MessageSession> handle) {
+        this.handle = handle;
+    }
 
     public static MessageSession newInstance() {
         MessageSession obj = RECYCLER.get();
@@ -23,66 +33,27 @@ public class MessageSession {
         return obj;
     }
 
-    private final Recycler.Handle<MessageSession> handle;
-
-    private MessageSession(Recycler.Handle<MessageSession> handle) {
-        this.handle = handle;
-    }
-
     public void recycle() {
         this.reset();
         handle.recycle(this);
     }
 
-
-    private AsciiString id = MessageSessionId.generate();
-    private SmtpCommand lastCommand = null;
-    private AsciiString reversePath = AsciiString.EMPTY_STRING;
-    private List<AsciiString> forwardPath = new ArrayList<>();
-    private boolean transactionStarted = false;
-    private long startedAt = System.nanoTime();
-    private long completedAt = 0l;
-    private long size = 0l;
-
     private void reset() {
         this.id = MessageSessionId.generate();
-        lastCommand = null;
         reversePath = AsciiString.EMPTY_STRING;
         forwardPath = new ArrayList<>();
         transactionStarted = false;
         startedAt = 0;
-        completedAt = 0l;
-        size = 0l;
+        completedAt = 0L;
     }
 
     public AsciiString getId() {
         return id;
     }
 
-    public SmtpCommand getLastCommand() {
-        return lastCommand;
-    }
-
-    public MessageSession setLastCommand(SmtpCommand lastCommand) {
-        this.lastCommand = lastCommand;
-        return this;
-    }
-
-    public AsciiString getReversePath() {
-        return reversePath;
-    }
-
     public MessageSession setReversePath(AsciiString reversePath) {
         this.reversePath = reversePath;
-        return this;
-    }
-
-    public List<AsciiString> getForwardPath() {
-        return forwardPath;
-    }
-
-    public MessageSession setForwardPath(List<AsciiString> forwardPath) {
-        this.forwardPath = forwardPath;
+        this.transactionStarted = true;
         return this;
     }
 
@@ -91,59 +62,29 @@ public class MessageSession {
         return this;
     }
 
+    public boolean needForward() {
+        return Objects.isNull(forwardPath) || forwardPath.isEmpty();
+    }
+
+    public boolean tooManyForward(int limit) {
+        return Objects.nonNull(forwardPath) && forwardPath.size() > limit;
+    }
 
     public boolean isTransactionStarted() {
         return transactionStarted;
     }
 
-    public MessageSession setTransactionStarted(boolean transactionStarted) {
-        this.transactionStarted = transactionStarted;
-        return this;
-    }
-
-    public void completed() {
+    public MessageSession completed() {
         this.completedAt = System.nanoTime();
-    }
-
-    public long getCompletedAt() {
-        return completedAt;
+        return this;
     }
 
     public long duration() {
         return this.completedAt - this.startedAt;
     }
 
-    private double durationMillis(){
+    private double durationMillis() {
         final long microSeconds = duration() / 1000;
         return microSeconds / 1000d;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public MessageSession setSize(long size) {
-        this.size = size;
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MessageSession)) return false;
-        MessageSession that = (MessageSession) o;
-        return getId().equals(that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "MessageSession{id='%s', reversePath=%s, forwardPath=%s, duration=%.3f, size=%d}",
-                id, reversePath, forwardPath, durationMillis(), size);
     }
 }

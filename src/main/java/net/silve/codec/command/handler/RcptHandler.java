@@ -27,7 +27,7 @@ public class RcptHandler implements CommandHandler {
         if (!session.isTransactionStarted()) {
             throw new InvalidProtocolException(ConstantResponse.RESPONSE_SENDER_NEEDED);
         }
-        if (session.getForwardPath().size() > 50) {
+        if (session.tooManyForward(50)) {
             throw new InvalidProtocolException(ConstantResponse.RESPONSE_TOO_MANY_RECIPIENTS);
         }
         if (request.parameters().isEmpty()) {
