@@ -2,7 +2,6 @@ package net.silve.codec.command.handler;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
-import io.netty.util.AsciiString;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
@@ -36,8 +35,10 @@ public class MailHandler implements CommandHandler {
         }
 
         final CharSequence reversePath = request.parameters().get(0);
-        return new HandlerResult(ConstantResponse.RESPONSE_MAIL_FROM_OK,
-                (MessageSession session1) -> session1.setReversePath(AsciiString.of(reversePath)));
+        if (reversePath.length() == 0) {
+            throw new InvalidProtocolException(ConstantResponse.RESPONSE_BAD_MAIL_SYNTAX);
+        }
+        return new HandlerResult(ConstantResponse.RESPONSE_MAIL_FROM_OK, MessageSession::setReversePath);
 
     }
 }

@@ -1,7 +1,6 @@
 package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
-import io.netty.util.AsciiString;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
@@ -29,7 +28,7 @@ class MailHandlerTest {
         try {
             HandlerResult handle = new MailHandler()
                     .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"),
-                            MessageSession.newInstance().setReversePath(AsciiString.of("email@domain.tld")));
+                            MessageSession.newInstance().setReversePath());
             assertEquals(ConstantResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
             fail();
         } catch (InvalidProtocolException e) {

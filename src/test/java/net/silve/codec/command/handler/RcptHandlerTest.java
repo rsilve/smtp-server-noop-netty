@@ -7,7 +7,6 @@ import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,11 +33,8 @@ class RcptHandlerTest {
     @Test
     void shouldThrowExceptionIfTooManyRecipient() {
         try {
-            ArrayList<AsciiString> list = new ArrayList<>(51);
-            MessageSession session = MessageSession.newInstance().setReversePath(AsciiString.of("email"));
-            IntStream.range(0, 51).forEach(value -> {
-                session.addForwardPath(AsciiString.of(String.valueOf(value)));
-            });
+            MessageSession session = MessageSession.newInstance().setReversePath();
+            IntStream.range(0, 51).forEach(value -> session.addForwardPath(AsciiString.of(String.valueOf(value))));
             RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), session);
             fail();
         } catch (InvalidProtocolException e) {
@@ -49,7 +45,7 @@ class RcptHandlerTest {
     @Test
     void shouldThrowExceptionIfNoRecipient() {
         try {
-            RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), MessageSession.newInstance().setReversePath(AsciiString.of("email")));
+            RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), MessageSession.newInstance().setReversePath());
             fail();
         } catch (InvalidProtocolException e) {
             assertEquals(ConstantResponse.RESPONSE_RECIPIENT_NEEDED, e.getResponse());
@@ -58,7 +54,7 @@ class RcptHandlerTest {
 
     @Test
     void shouldReturnResponse() throws InvalidProtocolException {
-        HandlerResult handle = RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "recipient"), MessageSession.newInstance().setReversePath(AsciiString.of("email")));
+        HandlerResult handle = RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "recipient"), MessageSession.newInstance().setReversePath());
         assertEquals(ConstantResponse.RESPONSE_RCPT_OK, handle.getResponse());
     }
 

@@ -16,7 +16,7 @@ class MessageSessionTest {
 
     @Test
     void shouldHaveAReversePathMethod() {
-        MessageSession session = MessageSession.newInstance().setReversePath(AsciiString.of("eee"));
+        MessageSession session = MessageSession.newInstance().setReversePath();
         assertTrue(session.isTransactionStarted());
     }
 
@@ -41,7 +41,7 @@ class MessageSessionTest {
     @Test
     void shouldHaveARecycleMethode() {
         MessageSession session = MessageSession.newInstance()
-                .setReversePath(AsciiString.of("eee"))
+                .setReversePath()
                 .addForwardPath(AsciiString.of("eee"))
                 .completed();
         assertTrue(session.isTransactionStarted());

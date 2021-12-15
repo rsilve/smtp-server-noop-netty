@@ -16,7 +16,6 @@ public class MessageSession {
     };
     private final Recycler.Handle<MessageSession> handle;
     private AsciiString id = MessageSessionId.generate();
-    private AsciiString reversePath = AsciiString.EMPTY_STRING;
     private List<AsciiString> forwardPath = new ArrayList<>();
     private boolean transactionStarted = false;
     private long startedAt = System.nanoTime();
@@ -40,7 +39,6 @@ public class MessageSession {
 
     private void reset() {
         this.id = MessageSessionId.generate();
-        reversePath = AsciiString.EMPTY_STRING;
         forwardPath = new ArrayList<>();
         transactionStarted = false;
         startedAt = 0;
@@ -51,8 +49,7 @@ public class MessageSession {
         return id;
     }
 
-    public MessageSession setReversePath(AsciiString reversePath) {
-        this.reversePath = reversePath;
+    public MessageSession setReversePath() {
         this.transactionStarted = true;
         return this;
     }
@@ -82,9 +79,5 @@ public class MessageSession {
     public long duration() {
         return this.completedAt - this.startedAt;
     }
-
-    private double durationMillis() {
-        final long microSeconds = duration() / 1000;
-        return microSeconds / 1000d;
-    }
+    
 }

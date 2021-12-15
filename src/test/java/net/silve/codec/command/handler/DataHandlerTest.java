@@ -34,7 +34,7 @@ class DataHandlerTest {
         try {
             DataHandler.singleton()
                     .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA),
-                            MessageSession.newInstance().setReversePath(AsciiString.of("email")));
+                            MessageSession.newInstance().setReversePath());
             fail();
         } catch (InvalidProtocolException e) {
             assertEquals(ConstantResponse.RESPONSE_RECIPIENT_NEEDED, e.getResponse());
@@ -46,7 +46,7 @@ class DataHandlerTest {
 
         HandlerResult handle = DataHandler.singleton()
                 .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA),
-                        MessageSession.newInstance().setReversePath(AsciiString.of("email")).addForwardPath(AsciiString.of("ee"))
+                        MessageSession.newInstance().setReversePath().addForwardPath(AsciiString.of("ee"))
                 );
         assertEquals(ConstantResponse.RESPONSE_END_DATA_MESSAGE, handle.getResponse());
 
