@@ -4,8 +4,8 @@ import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpRequest;
 import io.netty.util.Recycler;
 import io.netty.util.internal.ObjectUtil;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,14 +25,14 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
         this.handle = handle;
     }
 
-    public static RecyclableSmtpRequest newInstance(@NotNull SmtpCommand command) {
+    public static RecyclableSmtpRequest newInstance(@Nonnull SmtpCommand command) {
         RecyclableSmtpRequest obj = RECYCLER.get();
         obj.command = ObjectUtil.checkNotNull(command, COMMAND_SHOULD_NOT_BE_NULL);
         obj.parameters = Collections.emptyList();
         return obj;
     }
 
-    public static RecyclableSmtpRequest newInstance(@NotNull SmtpCommand command, CharSequence... parameters) {
+    public static RecyclableSmtpRequest newInstance(@Nonnull SmtpCommand command, CharSequence... parameters) {
         RecyclableSmtpRequest obj = RECYCLER.get();
         obj.command = ObjectUtil.checkNotNull(command, COMMAND_SHOULD_NOT_BE_NULL);
         obj.parameters = SmtpUtils.toUnmodifiableList(parameters);

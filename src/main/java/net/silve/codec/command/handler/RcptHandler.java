@@ -4,10 +4,9 @@ package net.silve.codec.command.handler;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
-import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.request.RecyclableSmtpRequest;
+import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
-import org.jetbrains.annotations.NotNull;
 
 @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 public class RcptHandler implements CommandHandler {
@@ -24,8 +23,7 @@ public class RcptHandler implements CommandHandler {
     }
 
     @Override
-    public @NotNull
-    HandlerResult handle(RecyclableSmtpRequest request, @NotNull MessageSession session) throws InvalidProtocolException {
+    public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session) throws InvalidProtocolException {
         if (!session.isTransactionStarted()) {
             throw new InvalidProtocolException(ConstantResponse.RESPONSE_SENDER_NEEDED);
         }

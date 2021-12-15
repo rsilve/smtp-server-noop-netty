@@ -22,7 +22,8 @@ class RecyclableSmtpRequestTest {
 
     @Test
     void shouldAvoidNullCommand() {
-        assertThrows(IllegalArgumentException.class, () -> RecyclableSmtpRequest.newInstance(null));
+        //noinspection ConstantConditions
+        assertThrows(NullPointerException.class, () -> RecyclableSmtpRequest.newInstance(null));
     }
 
     @Test
@@ -36,7 +37,8 @@ class RecyclableSmtpRequestTest {
 
     @Test
     void shouldAvoidNullCommandWithParameters() {
-        assertThrows(IllegalArgumentException.class, () -> RecyclableSmtpRequest.newInstance(null, AsciiString.EMPTY_STRING));
+        //noinspection ConstantConditions
+        assertThrows(NullPointerException.class, () -> RecyclableSmtpRequest.newInstance(null, AsciiString.EMPTY_STRING));
     }
 
 
