@@ -7,6 +7,8 @@ import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
 
+import javax.annotation.Nonnull;
+
 
 @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 public class MailHandler implements CommandHandler {
@@ -22,6 +24,7 @@ public class MailHandler implements CommandHandler {
         return SmtpCommand.MAIL.name();
     }
 
+    @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, final MessageSession session) throws InvalidProtocolException {
         if (session.isTransactionStarted()) {

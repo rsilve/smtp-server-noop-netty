@@ -11,6 +11,7 @@ import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
 import net.silve.codec.ssl.SslUtils;
 
+import javax.annotation.Nonnull;
 import javax.net.ssl.SSLEngine;
 
 public class StartTlsHandler implements CommandHandler {
@@ -32,6 +33,7 @@ public class StartTlsHandler implements CommandHandler {
         return STARTTLS.name();
     }
 
+    @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session) {
         return new HandlerResult(ConstantResponse.RESPONSE_STARTTLS, (ChannelHandlerContext ctx1) -> {

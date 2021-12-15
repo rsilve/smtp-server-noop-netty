@@ -6,6 +6,8 @@ import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
 
+import javax.annotation.Nonnull;
+
 @SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 public class EmptyHandler implements CommandHandler {
 
@@ -20,6 +22,7 @@ public class EmptyHandler implements CommandHandler {
         return SmtpCommand.EMPTY.name();
     }
 
+    @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session) {
         return HandlerResult.from(ConstantResponse.RESPONSE_EMPTY);
