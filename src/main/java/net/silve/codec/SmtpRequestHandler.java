@@ -15,6 +15,7 @@ import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
+import net.silve.codec.ssl.SslUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +36,9 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
         messageSession = MessageSession.newInstance();
+        if (SslUtils.isTlsEnabled()) {
+            messageSession.tlsEnabled();
+        }
 
         super.channelActive(ctx);
         logger.trace("[{}] connected", messageSession.getId());

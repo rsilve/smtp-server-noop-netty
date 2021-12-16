@@ -3,7 +3,6 @@ package net.silve.codec.request;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.smtp.SmtpContent;
-import io.netty.util.IllegalReferenceCountException;
 import io.netty.util.Recycler;
 
 
@@ -30,10 +29,7 @@ public class RecyclableSmtpContent extends RecyclableByteBufHolder implements Sm
     }
 
     public void recycle() {
-        boolean released = this.release();
-        if (!released) {
-            throw new IllegalReferenceCountException("Fail to release object");
-        }
+        this.release();
         handle.recycle(this);
     }
 

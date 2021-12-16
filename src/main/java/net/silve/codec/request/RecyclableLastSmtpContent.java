@@ -2,7 +2,6 @@ package net.silve.codec.request;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.smtp.LastSmtpContent;
-import io.netty.util.IllegalReferenceCountException;
 import io.netty.util.Recycler;
 
 import javax.annotation.Nonnull;
@@ -29,10 +28,7 @@ public final class RecyclableLastSmtpContent extends RecyclableSmtpContent imple
 
     @Override
     public void recycle() {
-        boolean released = this.release();
-        if (!released) {
-            throw new IllegalReferenceCountException("Fail to release object");
-        }
+        this.release();
         handle.recycle(this);
     }
 

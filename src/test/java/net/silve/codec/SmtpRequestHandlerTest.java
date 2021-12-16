@@ -8,6 +8,7 @@ import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.ssl.SslUtils;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -32,6 +33,28 @@ class SmtpRequestHandlerTest {
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO)));
         response = channel.readOutbound();
         assertEquals(ConstantResponse.RESPONSE_HELO, response);
+    }
+
+    @Test
+    void shouldReturnResponseOnCommand002() {
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_GREETING, response);
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO)));
+        response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_EHLO, response);
+    }
+
+
+    @Test
+    void shouldReturnResponseOnCommand003() {
+        SslUtils.initialize(true);
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_GREETING, response);
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO)));
+        response = channel.readOutbound();
+        assertEquals(ConstantResponse.RESPONSE_EHLO_STARTTLS, response);
     }
 
     @Test

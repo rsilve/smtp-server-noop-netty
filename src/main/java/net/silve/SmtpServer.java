@@ -24,6 +24,10 @@ public class SmtpServer implements Callable<Integer> {
             description = "listening port (default: ${DEFAULT-VALUE})")
     int port = 2525;
 
+    @CommandLine.Option(names = {"--tls"}, paramLabel = "tls",
+            description = "enable STARTTLS (default: ${DEFAULT-VALUE})")
+    boolean tls = false;
+
     @Override
     public Integer call() throws Exception {
         run();
@@ -32,7 +36,7 @@ public class SmtpServer implements Callable<Integer> {
 
     public void run() throws InterruptedException {
 
-        SslUtils.initialize();
+        SslUtils.initialize(this.tls);
 
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();

@@ -53,5 +53,13 @@ class MessageSessionTest {
         assertFalse(session.duration() > 0);
     }
 
+    @Test
+    void shouldHaveATLSEnabledAttribute() {
+        MessageSession session = MessageSession.newInstance();
+        assertFalse(session.isTlsEnabled());
+        session.tlsEnabled();
+        assertTrue(session.isTlsEnabled());
+    }
+
 
 }

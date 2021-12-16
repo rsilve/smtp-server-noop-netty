@@ -14,23 +14,31 @@ public class SslUtils {
     private static final Logger logger = LoggerFactory.getLogger(SslUtils.class);
 
     private static SslContext sslCtx;
+    private static boolean tlsEnabled;
 
-    public static void initialize() {
-        try {
-            SelfSignedCertificate ssc = new SelfSignedCertificate();
-            sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
-            logger.info("SSL context initialized DN: '{}'", ssc.cert().getIssuerDN());
-        } catch (CertificateException e) {
-            logger.error("Failed to initialize self signed certificate", e);
-        } catch (SSLException e) {
-            logger.error("Failed to initialize TLS context", e);
+    private SslUtils() {
+    }
+
+    public static void initialize(boolean useTls) {
+        tlsEnabled = useTls;
+        if (tlsEnabled) {
+            try {
+                SelfSignedCertificate ssc = new SelfSignedCertificate();
+                sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
+                logger.info("SSL context initialized DN: '{}'", ssc.cert().getIssuerDN());
+            } catch (CertificateException e) {
+                logger.error("Failed to initialize self signed certificate", e);
+            } catch (SSLException e) {
+                logger.error("Failed to initialize TLS context", e);
+            }
         }
+    }
+
+    public static boolean isTlsEnabled() {
+        return tlsEnabled;
     }
 
     public static SslContext getSslCtx() {
         return sslCtx;
-    }
-
-    private SslUtils() {
     }
 }
