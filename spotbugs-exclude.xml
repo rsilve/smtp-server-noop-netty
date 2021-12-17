@@ -7,4 +7,9 @@
     <Match>
         <Bug code="EI,EI2"/>
     </Match>
+    <Match>
+        <Class name="~net.silve.codec.request.Recyclable.*SmtpContent"/>
+        <Method name="recycle"/>
+        <Bug pattern="RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"/>
+    </Match>
 </FindBugsFilter>
