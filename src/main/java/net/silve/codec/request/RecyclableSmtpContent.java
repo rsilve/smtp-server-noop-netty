@@ -28,6 +28,7 @@ public class RecyclableSmtpContent extends RecyclableByteBufHolder implements Sm
         return obj;
     }
 
+    @SuppressWarnings("RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT")
     public void recycle() {
         this.release();
         handle.recycle(this);
