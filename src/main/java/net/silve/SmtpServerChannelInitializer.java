@@ -31,7 +31,7 @@ class SmtpServerChannelInitializer extends ChannelInitializer<SocketChannel> {
                 //.addLast(new WriteTimeoutHandler(10, TimeUnit.SECONDS))
                 .addLast(new DelimiterBasedFrameDecoder(2000, false, CRLF_DELIMITER))
                 .addLast(new SmtpResponseEncoder())
-                .addLast(new SmtpRequestDecoder())
+                .addLast(new SmtpRequestDecoder(configuration))
                 .addLast(new SmtpRequestHandler(configuration));
     }
 }

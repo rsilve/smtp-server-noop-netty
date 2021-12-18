@@ -10,11 +10,13 @@ import io.netty.util.CharsetUtil;
 import net.silve.codec.command.CommandMap;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.command.parsers.CommandParser;
+import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.DefaultResponse;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
@@ -27,10 +29,15 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
     private static final CommandMap commandMap = new CommandMap();
 
+    private final SmtpServerConfiguration configuration;
+
     private boolean contentExpected = false;
 
-    public SmtpRequestDecoder() {
+    public SmtpRequestDecoder(@Nonnull SmtpServerConfiguration configuration) {
         super(true);
+        Objects.requireNonNull(configuration, "configuration is required");
+        this.configuration = configuration;
+
     }
 
     @Override
@@ -95,6 +102,6 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
         if (Objects.isNull(parser)) {
             return EMPTY_CHAR_SEQUENCE;
         }
-        return parser.parse(line.subSequence(4, line.length()));
+        return parser.parse(line.subSequence(4, line.length()), configuration);
     }
 }

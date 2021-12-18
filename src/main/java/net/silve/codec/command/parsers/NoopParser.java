@@ -1,6 +1,9 @@
 package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.codec.configuration.SmtpServerConfiguration;
+
+import javax.annotation.Nonnull;
 
 public class NoopParser extends CommandParser {
 
@@ -16,7 +19,7 @@ public class NoopParser extends CommandParser {
     }
 
     @Override
-    public CharSequence[] parse(CharSequence line) {
+    public CharSequence[] parse(CharSequence line, @Nonnull SmtpServerConfiguration configuration) {
         return EMTPY;
     }
 }

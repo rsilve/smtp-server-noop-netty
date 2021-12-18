@@ -6,6 +6,8 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
+import net.silve.codec.configuration.SmtpServerConfiguration;
+import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
@@ -18,9 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SmtpRequestDecoderTest {
 
+    SmtpServerConfiguration configuration = new SmtpServerConfiguration(new SmtpServerConfigurationBuilder());
+
     @Test
     void shouldDecodeRequest() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
         ByteBuf buf = Unpooled.copiedBuffer("MAIL FROM:<name@domain.tld>\r\n".getBytes(StandardCharsets.UTF_8));
         assertTrue(channel.writeInbound(buf));
         assertTrue(channel.finish());
@@ -31,7 +35,7 @@ class SmtpRequestDecoderTest {
 
     @Test
     void shouldDecodeContent() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
         assertTrue(channel.writeInbound(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8))));
         assertTrue(channel.writeInbound(Unpooled.copiedBuffer("test".getBytes(StandardCharsets.UTF_8))));
         assertTrue(channel.finish());
@@ -43,7 +47,7 @@ class SmtpRequestDecoderTest {
 
     @Test
     void shouldDecodeLastContent() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
         assertTrue(channel.writeInbound(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8))));
         assertTrue(channel.writeInbound(Unpooled.wrappedBuffer(new byte[]{46, 13, 10})));
         assertTrue(channel.writeInbound(Unpooled.copiedBuffer("QUIT\r\n".getBytes(StandardCharsets.UTF_8))));
@@ -58,7 +62,7 @@ class SmtpRequestDecoderTest {
 
     @Test
     void shouldThrowExceptionIfTooShort() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
         ByteBuf buf = Unpooled.copiedBuffer("MAI\r\n".getBytes(StandardCharsets.UTF_8));
         assertFalse(channel.writeInbound(buf));
         assertTrue(channel.finish());
@@ -68,7 +72,7 @@ class SmtpRequestDecoderTest {
 
     @Test
     void shouldReturnResponseIfInvalid() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
         ByteBuf buf = Unpooled.copiedBuffer("MAIL FRO:<name@domain.tld>\r\n".getBytes(StandardCharsets.UTF_8));
         assertFalse(channel.writeInbound(buf));
         assertTrue(channel.finish());
@@ -78,7 +82,7 @@ class SmtpRequestDecoderTest {
 
     @Test
     void shouldDecodeUnknownCommand() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
         ByteBuf buf = Unpooled.copiedBuffer("TITI FROM:<name@domain.tld>\r\n".getBytes(StandardCharsets.UTF_8));
         assertTrue(channel.writeInbound(buf));
         assertTrue(channel.finish());
