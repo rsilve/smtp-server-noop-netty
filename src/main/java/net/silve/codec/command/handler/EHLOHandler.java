@@ -3,7 +3,6 @@ package net.silve.codec.command.handler;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
@@ -25,9 +24,9 @@ public class EHLOHandler implements CommandHandler {
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
         if (session.isTlsEnabled()) {
-            return HandlerResult.from(DefaultResponse.RESPONSE_EHLO_STARTTLS);
+            return HandlerResult.from(configuration.responses.responseEhloStarttls);
         } else {
-            return HandlerResult.from(DefaultResponse.RESPONSE_EHLO);
+            return HandlerResult.from(configuration.responses.responseEhlo);
         }
     }
 }

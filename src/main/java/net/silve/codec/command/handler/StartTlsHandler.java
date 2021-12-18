@@ -8,7 +8,6 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AsciiString;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 import net.silve.codec.ssl.SslUtils;
 
@@ -37,7 +36,7 @@ public class StartTlsHandler implements CommandHandler {
     @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
-        return new HandlerResult(DefaultResponse.RESPONSE_STARTTLS, (ChannelHandlerContext ctx1) -> {
+        return new HandlerResult(configuration.responses.responseStarttls, (ChannelHandlerContext ctx1) -> {
             final SSLEngine sslEngine = sslCtx.newEngine(ctx1.channel().alloc());
             ctx1.pipeline().addFirst(new SslHandler(sslEngine, true));
         });
