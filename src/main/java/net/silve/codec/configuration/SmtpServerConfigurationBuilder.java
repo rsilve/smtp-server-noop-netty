@@ -10,6 +10,7 @@ public class SmtpServerConfigurationBuilder {
 
     private int port;
     private Map<String, SmtpResponse> responseMap = defaultResponsesMap;
+    private String banner = "no-op ESMTP";
 
     public SmtpServerConfigurationBuilder() {
         /* empty */
@@ -30,6 +31,15 @@ public class SmtpServerConfigurationBuilder {
 
     public SmtpServerConfigurationBuilder setResponseMap(Map<String, SmtpResponse> responseMap) {
         this.responseMap = responseMap;
+        return this;
+    }
+
+    public String getBanner() {
+        return banner;
+    }
+
+    public SmtpServerConfigurationBuilder setBanner(String banner) {
+        this.banner = banner;
         return this;
     }
 }

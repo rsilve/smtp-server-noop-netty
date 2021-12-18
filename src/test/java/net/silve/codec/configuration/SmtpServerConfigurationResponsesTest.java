@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SmtpServerConfigurationResponsesTest {
 
-    SmtpServerConfigurationResponses responses = new SmtpServerConfigurationResponses(DefaultResponse.defaultResponsesMap);
+    SmtpServerConfigurationResponses responses = new SmtpServerConfigurationResponses(DefaultResponse.defaultResponsesMap, "banner");
 
     @Test
     void shouldReturnResponseUnknownCommand() {
@@ -28,7 +28,7 @@ class SmtpServerConfigurationResponsesTest {
     void shouldReturnResponseGreeting() {
         SmtpResponse response = responses.responseGreeting;
         assertEquals(220, response.code());
-        assertEquals(AsciiString.of("silve.net ESMTP"), response.details().get(0));
+        assertEquals(AsciiString.of("banner"), response.details().get(0));
     }
 
     @Test

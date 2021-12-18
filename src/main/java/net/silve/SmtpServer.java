@@ -31,6 +31,10 @@ public class SmtpServer implements Callable<Integer> {
             description = "enable STARTTLS (default: ${DEFAULT-VALUE})")
     boolean tls = false;
 
+    @CommandLine.Option(names = {"--banner"}, paramLabel = "banner",
+            description = "set SMTP greeting banner (default: ${DEFAULT-VALUE})")
+    String banner = "no-op ESMTP";
+
     @Override
     public Integer call() throws Exception {
         run();
@@ -68,7 +72,8 @@ public class SmtpServer implements Callable<Integer> {
 
     @Nonnull
     public SmtpServerConfiguration configure() {
-        SmtpServerConfigurationBuilder builder = new SmtpServerConfigurationBuilder();
+        SmtpServerConfigurationBuilder builder = new SmtpServerConfigurationBuilder()
+                .setBanner(banner);
         return new SmtpServerConfiguration(builder);
     }
 }

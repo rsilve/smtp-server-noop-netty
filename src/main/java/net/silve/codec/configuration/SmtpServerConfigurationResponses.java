@@ -1,6 +1,8 @@
 package net.silve.codec.configuration;
 
+import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
+import io.netty.util.AsciiString;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -32,7 +34,7 @@ public class SmtpServerConfigurationResponses {
     public final SmtpResponse responseBadSyntax;
     public final SmtpResponse responseUnknownCommand;
 
-    public SmtpServerConfigurationResponses(@Nonnull Map<String, SmtpResponse> map) {
+    public SmtpServerConfigurationResponses(@Nonnull Map<String, SmtpResponse> map, String banner) {
         Objects.requireNonNull(map, "responses map is required");
         responseBye = map.get(RESPONSE_BYE_NAME);
         responseEndDataMessage = map.get(RESPONSE_END_DATA_MESSAGE_NAME);
@@ -52,8 +54,11 @@ public class SmtpServerConfigurationResponses {
         responseHelo = map.get(RESPONSE_HELO_NAME);
         responseEhloStarttls = map.get(RESPONSE_EHLO_STARTTLS_NAME);
         responseEhlo = map.get(RESPONSE_EHLO_NAME);
-        responseGreeting = map.get(RESPONSE_GREETING_NAME);
         responseBadSyntax = map.get(RESPONSE_BAD_SYNTAX_NAME);
         responseUnknownCommand = map.get(RESPONSE_UNKNOWN_COMMAND_NAME);
+
+        responseGreeting = new DefaultSmtpResponse(220, AsciiString.of(banner));
     }
+
+
 }
