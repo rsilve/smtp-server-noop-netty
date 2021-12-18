@@ -99,7 +99,7 @@ class SmtpRequestHandlerTest {
         channel.readOutbound();
         response = channel.readOutbound();
         assertEquals(250, response.code());
-        assertTrue(response.details().get(0).toString().startsWith("Ok queued"));
+        assertTrue(response.details().get(0).toString().startsWith("2.0.0 Ok: queued as"));
     }
 
     @Test

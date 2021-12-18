@@ -31,6 +31,8 @@ public class SslUtils {
             } catch (SSLException e) {
                 logger.error("Failed to initialize TLS context", e);
             }
+        } else {
+            sslCtx = null;
         }
     }
 

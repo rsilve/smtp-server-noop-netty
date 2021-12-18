@@ -25,7 +25,7 @@ public class DataContentHandler {
         if (content instanceof RecyclableLastSmtpContent) {
             session.completed();
             return new HandlerResult(
-                    new DefaultSmtpResponse(250, String.format("Ok queued as %s", session.getId())),
+                    new DefaultSmtpResponse(250, String.format("2.0.0 Ok: queued as %s", session.getId())),
                     MessageSession::completed);
         } else {
             return null;
