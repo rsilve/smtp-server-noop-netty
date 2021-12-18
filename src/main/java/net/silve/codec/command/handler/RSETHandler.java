@@ -2,6 +2,7 @@ package net.silve.codec.command.handler;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
@@ -24,7 +25,7 @@ public class RSETHandler implements CommandHandler {
 
     @Nonnull
     @Override
-    public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session) {
+    public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
         return HandlerResult.from(DefaultResponse.RESPONSE_RSET_OK);
     }
 }

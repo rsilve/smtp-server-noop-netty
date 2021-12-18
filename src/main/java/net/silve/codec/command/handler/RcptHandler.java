@@ -4,6 +4,7 @@ package net.silve.codec.command.handler;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
+import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
@@ -26,7 +27,7 @@ public class RcptHandler implements CommandHandler {
 
     @Nonnull
     @Override
-    public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session) throws InvalidProtocolException {
+    public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) throws InvalidProtocolException {
         if (!session.isTransactionStarted()) {
             throw new InvalidProtocolException(DefaultResponse.RESPONSE_SENDER_NEEDED);
         }

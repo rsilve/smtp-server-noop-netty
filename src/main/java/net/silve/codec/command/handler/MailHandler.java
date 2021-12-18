@@ -2,6 +2,7 @@ package net.silve.codec.command.handler;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
@@ -25,7 +26,7 @@ public class MailHandler implements CommandHandler {
 
     @Nonnull
     @Override
-    public HandlerResult handle(RecyclableSmtpRequest request, final MessageSession session) throws InvalidProtocolException {
+    public HandlerResult handle(RecyclableSmtpRequest request, final MessageSession session, SmtpServerConfiguration configuration) throws InvalidProtocolException {
         if (session.isTransactionStarted()) {
             throw new InvalidProtocolException(DefaultResponse.RESPONSE_SENDER_ALREADY_SPECIFIED);
         }

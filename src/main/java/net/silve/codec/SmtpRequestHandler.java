@@ -11,6 +11,7 @@ import net.silve.codec.command.handler.CommandHandler;
 import net.silve.codec.command.handler.DataContentHandler;
 import net.silve.codec.command.handler.HandlerResult;
 import net.silve.codec.command.handler.InvalidProtocolException;
+import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.DefaultResponse;
@@ -19,6 +20,7 @@ import net.silve.codec.ssl.SslUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
@@ -30,8 +32,15 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(SmtpRequestHandler.class);
 
     private static final CommandMap commandMap = new CommandMap();
+    private final SmtpServerConfiguration configuration;
 
     private MessageSession messageSession;
+
+    public SmtpRequestHandler(@Nonnull SmtpServerConfiguration configuration) {
+        super();
+        Objects.requireNonNull(configuration, "server configuration is required");
+        this.configuration = configuration;
+    }
 
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
@@ -77,7 +86,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         try {
             final SmtpCommand command = request.command();
             final CommandHandler commandHandler = commandMap.getHandler(command.name());
-            HandlerResult result = commandHandler.response(request, messageSession);
+            HandlerResult result = commandHandler.response(request, messageSession, configuration);
             result.getSessionAction().execute(messageSession);
             result.getAction().execute(ctx);
             logger.trace("[{}] Request: {}, Response: {}", messageSession.getId(), request, result.getResponse());

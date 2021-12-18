@@ -4,6 +4,8 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpResponse;
+import net.silve.codec.configuration.SmtpServerConfiguration;
+import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
@@ -17,9 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SmtpRequestHandlerTest {
 
+    SmtpServerConfiguration configuration = new SmtpServerConfiguration(new SmtpServerConfigurationBuilder());
+
     @Test
     void shouldReturnGreeting() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         assertTrue(channel.finish());
         SmtpResponse response = channel.readOutbound();
         assertEquals(DefaultResponse.RESPONSE_GREETING, response);
@@ -27,7 +31,7 @@ class SmtpRequestHandlerTest {
 
     @Test
     void shouldReturnResponseOnCommand() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
         assertEquals(DefaultResponse.RESPONSE_GREETING, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO)));
@@ -37,7 +41,7 @@ class SmtpRequestHandlerTest {
 
     @Test
     void shouldReturnResponseOnCommand002() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
         assertEquals(DefaultResponse.RESPONSE_GREETING, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO)));
@@ -49,7 +53,7 @@ class SmtpRequestHandlerTest {
     @Test
     void shouldReturnResponseOnCommand003() {
         SslUtils.initialize(true);
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
         assertEquals(DefaultResponse.RESPONSE_GREETING, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO)));
@@ -59,7 +63,7 @@ class SmtpRequestHandlerTest {
 
     @Test
     void shouldReturnResponseOnInvalidCommand() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
         assertEquals(DefaultResponse.RESPONSE_GREETING, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL)));
@@ -69,7 +73,7 @@ class SmtpRequestHandlerTest {
 
     @Test
     void shouldReturnResponseOnInvalidCommand002() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
         assertEquals(DefaultResponse.RESPONSE_GREETING, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
@@ -79,7 +83,7 @@ class SmtpRequestHandlerTest {
 
     @Test
     void shouldReturnResponseOnUnknownCommand() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
         assertEquals(DefaultResponse.RESPONSE_GREETING, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.valueOf("FOO"))));
@@ -89,7 +93,7 @@ class SmtpRequestHandlerTest {
 
     @Test
     void shouldReturnResponseOnLastContent() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
         assertEquals(DefaultResponse.RESPONSE_GREETING, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
@@ -104,7 +108,7 @@ class SmtpRequestHandlerTest {
 
     @Test
     void shouldNotReturnResponseOnContent() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler());
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
         assertEquals(DefaultResponse.RESPONSE_GREETING, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));

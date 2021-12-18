@@ -1,6 +1,8 @@
 package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.codec.configuration.SmtpServerConfiguration;
+import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
@@ -11,6 +13,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class MailHandlerTest {
 
+    SmtpServerConfiguration configuration = new SmtpServerConfiguration(new SmtpServerConfigurationBuilder());
+
     @Test
     void shouldHaveName() {
         CharSequence name = new MailHandler().getName();
@@ -19,14 +23,14 @@ class MailHandlerTest {
 
     @Test
     void shouldReturnResponse() throws InvalidProtocolException {
-        HandlerResult handle = new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"), MessageSession.newInstance());
+        HandlerResult handle = new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"), MessageSession.newInstance(), configuration);
         assertEquals(DefaultResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
     }
 
     @Test
     void shouldThrowExceptionIfTransactionAlreadStarted() {
         try {
-            HandlerResult handle = new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"), MessageSession.newInstance().setReversePath());
+            HandlerResult handle = new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "test@domain.tld"), MessageSession.newInstance().setReversePath(), configuration);
             assertEquals(DefaultResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
             fail();
         } catch (InvalidProtocolException e) {
@@ -37,7 +41,7 @@ class MailHandlerTest {
     @Test
     void shouldThrowExceptionMailIsEmtpy() {
         try {
-            new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, ""), MessageSession.newInstance());
+            new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, ""), MessageSession.newInstance(), configuration);
             fail();
         } catch (InvalidProtocolException e) {
             assertEquals(DefaultResponse.RESPONSE_BAD_MAIL_SYNTAX, e.getResponse());
@@ -47,7 +51,7 @@ class MailHandlerTest {
     @Test
     void shouldThrowExceptionRequestParameterIsEmpty() {
         try {
-            HandlerResult handle = new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL), MessageSession.newInstance());
+            HandlerResult handle = new MailHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL), MessageSession.newInstance(), configuration);
             assertEquals(DefaultResponse.RESPONSE_MAIL_FROM_OK, handle.getResponse());
             fail();
         } catch (InvalidProtocolException e) {
