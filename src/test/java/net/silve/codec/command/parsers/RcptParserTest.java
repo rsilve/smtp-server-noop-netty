@@ -5,7 +5,6 @@ import io.netty.util.AsciiString;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
-import net.silve.codec.response.DefaultResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +40,7 @@ class RcptParserTest {
             RcptParser.singleton().parse("T:<name@domain.tld> extension", configuration);
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(DefaultResponse.RESPONSE_BAD_RCPT_SYNTAX, e.getResponse());
+            assertEquals(configuration.responses.responseBadRcptSyntax, e.getResponse());
         }
 
     }
@@ -52,7 +51,7 @@ class RcptParserTest {
             RcptParser.singleton().parse("TO:<name@domain", configuration);
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(DefaultResponse.RESPONSE_BAD_RECIPIENT_SYNTAX, e.getResponse());
+            assertEquals(configuration.responses.responseBadRecipientSyntax, e.getResponse());
         }
 
     }

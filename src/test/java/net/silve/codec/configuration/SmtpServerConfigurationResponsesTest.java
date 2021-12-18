@@ -2,7 +2,6 @@ package net.silve.codec.configuration;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.util.AsciiString;
-import net.silve.codec.response.DefaultResponse;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

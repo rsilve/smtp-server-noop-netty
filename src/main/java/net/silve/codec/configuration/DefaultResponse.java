@@ -1,4 +1,4 @@
-package net.silve.codec.response;
+package net.silve.codec.configuration;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
@@ -7,7 +7,7 @@ import io.netty.util.AsciiString;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultResponse {
+class DefaultResponse {
 
     public static final String RESPONSE_UNKNOWN_COMMAND_NAME = "RESPONSE_UNKNOWN_COMMAND_NAME";
     public static final String RESPONSE_BAD_SYNTAX_NAME = "RESPONSE_BAD_SYNTAX_NAME";

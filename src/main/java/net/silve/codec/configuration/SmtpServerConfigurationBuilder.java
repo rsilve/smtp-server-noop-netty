@@ -4,7 +4,7 @@ import io.netty.handler.codec.smtp.SmtpResponse;
 
 import java.util.Map;
 
-import static net.silve.codec.response.DefaultResponse.defaultResponsesMap;
+import static net.silve.codec.configuration.DefaultResponse.defaultResponsesMap;
 
 public class SmtpServerConfigurationBuilder {
 

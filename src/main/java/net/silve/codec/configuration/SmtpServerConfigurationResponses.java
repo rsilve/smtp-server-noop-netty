@@ -6,7 +6,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Objects;
 
-import static net.silve.codec.response.DefaultResponse.*;
+import static net.silve.codec.configuration.DefaultResponse.*;
 
 public class SmtpServerConfigurationResponses {
 

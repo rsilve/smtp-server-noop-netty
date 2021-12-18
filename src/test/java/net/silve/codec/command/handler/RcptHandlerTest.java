@@ -5,7 +5,6 @@ import io.netty.util.AsciiString;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +29,7 @@ class RcptHandlerTest {
             RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), MessageSession.newInstance(), configuration);
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(DefaultResponse.RESPONSE_SENDER_NEEDED, e.getResponse());
+            assertEquals(configuration.responses.responseSenderNeeded, e.getResponse());
         }
     }
 
@@ -42,7 +41,7 @@ class RcptHandlerTest {
             RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), session, configuration);
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(DefaultResponse.RESPONSE_TOO_MANY_RECIPIENTS, e.getResponse());
+            assertEquals(configuration.responses.responseTooManyRecipients, e.getResponse());
         }
     }
 
@@ -52,14 +51,14 @@ class RcptHandlerTest {
             RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), MessageSession.newInstance().setReversePath(), configuration);
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(DefaultResponse.RESPONSE_RECIPIENT_NEEDED, e.getResponse());
+            assertEquals(configuration.responses.responseRecipientNeeded, e.getResponse());
         }
     }
 
     @Test
     void shouldReturnResponse() throws InvalidProtocolException {
         HandlerResult handle = RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "recipient"), MessageSession.newInstance().setReversePath(), configuration);
-        assertEquals(DefaultResponse.RESPONSE_RCPT_OK, handle.getResponse());
+        assertEquals(configuration.responses.responseRcptOk, handle.getResponse());
     }
 
 

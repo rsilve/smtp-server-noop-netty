@@ -4,7 +4,6 @@ import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +22,7 @@ class QUITHandlerTest {
     @Test
     void shouldReturnResponse() {
         HandlerResult handle = QUITHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO), MessageSession.newInstance(), configuration);
-        assertEquals(DefaultResponse.RESPONSE_BYE, handle.getResponse());
+        assertEquals(configuration.responses.responseBye, handle.getResponse());
     }
 
 }

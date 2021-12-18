@@ -9,7 +9,6 @@ import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.ssl.SslUtils;
 import org.junit.jupiter.api.Test;
 
@@ -26,27 +25,27 @@ class SmtpRequestHandlerTest {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         assertTrue(channel.finish());
         SmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_GREETING, response);
+        assertEquals(configuration.responses.responseGreeting, response);
     }
 
     @Test
     void shouldReturnResponseOnCommand() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_GREETING, response);
+        assertEquals(configuration.responses.responseGreeting, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO)));
         response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_HELO, response);
+        assertEquals(configuration.responses.responseHelo, response);
     }
 
     @Test
     void shouldReturnResponseOnCommand002() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_GREETING, response);
+        assertEquals(configuration.responses.responseGreeting, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO)));
         response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_EHLO, response);
+        assertEquals(configuration.responses.responseEhlo, response);
     }
 
 
@@ -55,47 +54,47 @@ class SmtpRequestHandlerTest {
         SslUtils.initialize(true);
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_GREETING, response);
+        assertEquals(configuration.responses.responseGreeting, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO)));
         response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_EHLO_STARTTLS, response);
+        assertEquals(configuration.responses.responseEhloStarttls, response);
     }
 
     @Test
     void shouldReturnResponseOnInvalidCommand() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_GREETING, response);
+        assertEquals(configuration.responses.responseGreeting, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL)));
         response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_SENDER_NEEDED, response);
+        assertEquals(configuration.responses.responseSenderNeeded, response);
     }
 
     @Test
     void shouldReturnResponseOnInvalidCommand002() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_GREETING, response);
+        assertEquals(configuration.responses.responseGreeting, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
         response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_SENDER_NEEDED, response);
+        assertEquals(configuration.responses.responseSenderNeeded, response);
     }
 
     @Test
     void shouldReturnResponseOnUnknownCommand() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_GREETING, response);
+        assertEquals(configuration.responses.responseGreeting, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.valueOf("FOO"))));
         response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_UNKNOWN_COMMAND, response);
+        assertEquals(configuration.responses.responseUnknownCommand, response);
     }
 
     @Test
     void shouldReturnResponseOnLastContent() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_GREETING, response);
+        assertEquals(configuration.responses.responseGreeting, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
         assertFalse(channel.writeInbound(RecyclableLastSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));
@@ -110,7 +109,7 @@ class SmtpRequestHandlerTest {
     void shouldNotReturnResponseOnContent() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
         SmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_GREETING, response);
+        assertEquals(configuration.responses.responseGreeting, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "rctp@domain.tld")));
         assertFalse(channel.writeInbound(RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));

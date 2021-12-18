@@ -4,7 +4,6 @@ import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +22,7 @@ class EmptyHandlerTest {
     @Test
     void shouldReturnResponse() {
         HandlerResult handle = new EmptyHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO), MessageSession.newInstance(), configuration);
-        assertEquals(DefaultResponse.RESPONSE_EMPTY, handle.getResponse());
+        assertEquals(configuration.responses.responseEmpty, handle.getResponse());
     }
 
 }

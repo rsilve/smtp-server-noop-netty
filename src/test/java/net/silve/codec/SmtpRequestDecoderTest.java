@@ -11,7 +11,6 @@ import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.DefaultResponse;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -67,7 +66,7 @@ class SmtpRequestDecoderTest {
         assertFalse(channel.writeInbound(buf));
         assertTrue(channel.finish());
         DefaultSmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_UNKNOWN_COMMAND, response);
+        assertEquals(configuration.responses.responseUnknownCommand, response);
     }
 
     @Test
@@ -77,7 +76,7 @@ class SmtpRequestDecoderTest {
         assertFalse(channel.writeInbound(buf));
         assertTrue(channel.finish());
         DefaultSmtpResponse response = channel.readOutbound();
-        assertEquals(DefaultResponse.RESPONSE_BAD_MAIL_SYNTAX, response);
+        assertEquals(configuration.responses.responseBadMailSyntax, response);
     }
 
     @Test

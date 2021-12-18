@@ -5,7 +5,6 @@ import io.netty.util.AsciiString;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableLastSmtpContent;
-import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -21,14 +20,14 @@ class DataContentHandlerTest {
     void shouldThrowExceptionIfSenderNeeded() {
         InvalidProtocolException exception = assertThrows(InvalidProtocolException.class, () -> DataContentHandler.singleton().handle(null, MessageSession.newInstance(), configuration));
 
-        assertEquals(DefaultResponse.RESPONSE_SENDER_NEEDED, exception.getResponse());
+        assertEquals(configuration.responses.responseSenderNeeded, exception.getResponse());
     }
 
     @Test
     void shouldThrowExceptionIfRecipientNeeded() {
         InvalidProtocolException exception = assertThrows(InvalidProtocolException.class, () -> DataContentHandler.singleton().handle(null, MessageSession.newInstance().setReversePath(), configuration));
 
-        assertEquals(DefaultResponse.RESPONSE_RECIPIENT_NEEDED, exception.getResponse());
+        assertEquals(configuration.responses.responseRecipientNeeded, exception.getResponse());
     }
 
 

@@ -1,4 +1,4 @@
-package net.silve.codec.response;
+package net.silve.codec.configuration;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.util.AsciiString;
@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class ConstantResponseTest {
+class DefaultResponseTest {
 
     @Test
     void shouldReturnResponseUnknowCommand() {
