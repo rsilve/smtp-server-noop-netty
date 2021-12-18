@@ -14,7 +14,6 @@ import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 import net.silve.codec.ssl.SslUtils;
 import org.slf4j.Logger;
@@ -52,7 +51,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         super.channelActive(ctx);
         logger.trace("[{}] connected", messageSession.getId());
 
-        final SmtpResponse response = DefaultResponse.RESPONSE_GREETING;
+        final SmtpResponse response = configuration.responses.responseGreeting;
         ctx.writeAndFlush(response);
 
     }
@@ -97,7 +96,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         } catch (InvalidProtocolException e) {
             ctx.writeAndFlush(e.getResponse());
         } catch (Exception e) {
-            ctx.writeAndFlush(DefaultResponse.RESPONSE_UNKNOWN_COMMAND);
+            ctx.writeAndFlush(configuration.responses.responseUnknownCommand);
         } finally {
             request.recycle();
         }

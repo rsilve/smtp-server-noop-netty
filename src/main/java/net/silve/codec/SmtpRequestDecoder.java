@@ -14,7 +14,6 @@ import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.DefaultResponse;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
@@ -24,11 +23,9 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
     private static final ByteBuf DOT_CRLF_DELIMITER = Unpooled.wrappedBuffer(new byte[]{46, 13, 10});
     private static final CharSequence[] EMPTY_CHAR_SEQUENCE = {};
-    private static final InvalidProtocolException EXCEPTION_BAD_SYNTAX = new InvalidProtocolException(DefaultResponse.RESPONSE_BAD_SYNTAX);
-    private static final InvalidProtocolException EXCEPTION_UNKNOWN_COMMAND = new InvalidProtocolException(DefaultResponse.RESPONSE_UNKNOWN_COMMAND);
-
     private static final CommandMap commandMap = new CommandMap();
-
+    private final InvalidProtocolException exceptionBadSyntax;
+    private final InvalidProtocolException exceptionUnknownCommand;
     private final SmtpServerConfiguration configuration;
 
     private boolean contentExpected = false;
@@ -37,7 +34,8 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
         super(true);
         Objects.requireNonNull(configuration, "configuration is required");
         this.configuration = configuration;
-
+        exceptionBadSyntax = new InvalidProtocolException(configuration.responses.responseBadSyntax);
+        exceptionUnknownCommand = new InvalidProtocolException(configuration.responses.responseUnknownCommand);
     }
 
     @Override
@@ -77,11 +75,11 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     private RecyclableSmtpRequest parseLine(ByteBuf frame) throws InvalidProtocolException {
         int readable = frame.readableBytes();
         if (readable < 6) {
-            throw EXCEPTION_UNKNOWN_COMMAND;
+            throw exceptionUnknownCommand;
         }
         CharSequence detail = frame.isReadable() ? frame.toString(CharsetUtil.US_ASCII) : null;
         if (Objects.isNull(detail)) {
-            throw EXCEPTION_BAD_SYNTAX;
+            throw exceptionBadSyntax;
         }
 
         final CharSequence command = getCommand(detail);
