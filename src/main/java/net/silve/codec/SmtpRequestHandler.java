@@ -68,7 +68,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     private void readContent(ChannelHandlerContext ctx, Object msg) {
         DataContentHandler contentHandler = DataContentHandler.singleton();
         try {
-            HandlerResult result = contentHandler.handle(msg, messageSession);
+            HandlerResult result = contentHandler.handle(msg, messageSession, configuration);
             if (!Objects.isNull(result)) {
                 ctx.writeAndFlush(result.getResponse());
             }
