@@ -3,7 +3,7 @@ package net.silve.codec.command.handler;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
@@ -25,6 +25,6 @@ public class QUITHandler implements CommandHandler {
     @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session) {
-        return HandlerResult.from(ConstantResponse.RESPONSE_BYE);
+        return HandlerResult.from(DefaultResponse.RESPONSE_BYE);
     }
 }

@@ -3,7 +3,7 @@ package net.silve.codec.command.handler;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ class RcptHandlerTest {
             RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), MessageSession.newInstance());
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, e.getResponse());
+            assertEquals(DefaultResponse.RESPONSE_SENDER_NEEDED, e.getResponse());
         }
     }
 
@@ -38,7 +38,7 @@ class RcptHandlerTest {
             RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), session);
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(ConstantResponse.RESPONSE_TOO_MANY_RECIPIENTS, e.getResponse());
+            assertEquals(DefaultResponse.RESPONSE_TOO_MANY_RECIPIENTS, e.getResponse());
         }
     }
 
@@ -48,14 +48,14 @@ class RcptHandlerTest {
             RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT), MessageSession.newInstance().setReversePath());
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(ConstantResponse.RESPONSE_RECIPIENT_NEEDED, e.getResponse());
+            assertEquals(DefaultResponse.RESPONSE_RECIPIENT_NEEDED, e.getResponse());
         }
     }
 
     @Test
     void shouldReturnResponse() throws InvalidProtocolException {
         HandlerResult handle = RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "recipient"), MessageSession.newInstance().setReversePath());
-        assertEquals(ConstantResponse.RESPONSE_RCPT_OK, handle.getResponse());
+        assertEquals(DefaultResponse.RESPONSE_RCPT_OK, handle.getResponse());
     }
 
 

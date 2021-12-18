@@ -1,7 +1,7 @@
 package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class HELOHandlerTest {
     @Test
     void shouldReturnResponse() {
         HandlerResult handle = new HELOHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO), MessageSession.newInstance());
-        assertEquals(ConstantResponse.RESPONSE_HELO, handle.getResponse());
+        assertEquals(DefaultResponse.RESPONSE_HELO, handle.getResponse());
     }
 
 }

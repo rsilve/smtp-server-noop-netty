@@ -2,7 +2,7 @@ package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import net.silve.codec.request.RecyclableLastSmtpContent;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 
 public class DataContentHandler {
@@ -15,11 +15,11 @@ public class DataContentHandler {
 
     public HandlerResult handle(Object content, MessageSession session) throws InvalidProtocolException {
         if (!session.isTransactionStarted()) {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_SENDER_NEEDED);
+            throw new InvalidProtocolException(DefaultResponse.RESPONSE_SENDER_NEEDED);
         }
 
         if (session.needForward()) {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_RECIPIENT_NEEDED);
+            throw new InvalidProtocolException(DefaultResponse.RESPONSE_RECIPIENT_NEEDED);
         }
 
         if (content instanceof RecyclableLastSmtpContent) {

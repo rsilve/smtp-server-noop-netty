@@ -3,7 +3,7 @@ package net.silve.codec.command.handler;
 import io.netty.buffer.Unpooled;
 import io.netty.util.AsciiString;
 import net.silve.codec.request.RecyclableLastSmtpContent;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -17,14 +17,14 @@ class DataContentHandlerTest {
     void shouldThrowExceptionIfSenderNeeded() {
         InvalidProtocolException exception = assertThrows(InvalidProtocolException.class, () -> DataContentHandler.singleton().handle(null, MessageSession.newInstance()));
 
-        assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, exception.getResponse());
+        assertEquals(DefaultResponse.RESPONSE_SENDER_NEEDED, exception.getResponse());
     }
 
     @Test
     void shouldThrowExceptionIfRecipientNeeded() {
         InvalidProtocolException exception = assertThrows(InvalidProtocolException.class, () -> DataContentHandler.singleton().handle(null, MessageSession.newInstance().setReversePath()));
 
-        assertEquals(ConstantResponse.RESPONSE_RECIPIENT_NEEDED, exception.getResponse());
+        assertEquals(DefaultResponse.RESPONSE_RECIPIENT_NEEDED, exception.getResponse());
     }
 
 

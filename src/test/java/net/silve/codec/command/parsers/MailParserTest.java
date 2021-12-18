@@ -2,7 +2,7 @@ package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +36,7 @@ class MailParserTest {
             MailParser.singleton().parse("FRO:<name@domain.tld> extension");
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(ConstantResponse.RESPONSE_BAD_MAIL_SYNTAX, e.getResponse());
+            assertEquals(DefaultResponse.RESPONSE_BAD_MAIL_SYNTAX, e.getResponse());
         }
 
     }
@@ -47,7 +47,7 @@ class MailParserTest {
             MailParser.singleton().parse("FROM:<name@domain");
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(ConstantResponse.RESPONSE_BAD_SENDER_SYNTAX, e.getResponse());
+            assertEquals(DefaultResponse.RESPONSE_BAD_SENDER_SYNTAX, e.getResponse());
         }
 
     }

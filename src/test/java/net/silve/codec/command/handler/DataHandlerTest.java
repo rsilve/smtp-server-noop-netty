@@ -3,7 +3,7 @@ package net.silve.codec.command.handler;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +25,7 @@ class DataHandlerTest {
                     .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA), MessageSession.newInstance());
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(ConstantResponse.RESPONSE_SENDER_NEEDED, e.getResponse());
+            assertEquals(DefaultResponse.RESPONSE_SENDER_NEEDED, e.getResponse());
         }
     }
 
@@ -37,7 +37,7 @@ class DataHandlerTest {
                             MessageSession.newInstance().setReversePath());
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(ConstantResponse.RESPONSE_RECIPIENT_NEEDED, e.getResponse());
+            assertEquals(DefaultResponse.RESPONSE_RECIPIENT_NEEDED, e.getResponse());
         }
     }
 
@@ -48,7 +48,7 @@ class DataHandlerTest {
                 .handle(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA),
                         MessageSession.newInstance().setReversePath().addForwardPath(AsciiString.of("ee"))
                 );
-        assertEquals(ConstantResponse.RESPONSE_END_DATA_MESSAGE, handle.getResponse());
+        assertEquals(DefaultResponse.RESPONSE_END_DATA_MESSAGE, handle.getResponse());
 
     }
 

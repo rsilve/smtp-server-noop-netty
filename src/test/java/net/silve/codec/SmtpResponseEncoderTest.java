@@ -2,7 +2,7 @@ package net.silve.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.embedded.EmbeddedChannel;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -14,7 +14,7 @@ class SmtpResponseEncoderTest {
     @Test
     void shouldEncodeResponse() {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpResponseEncoder());
-        assertTrue(channel.writeOutbound(ConstantResponse.RESPONSE_HELO));
+        assertTrue(channel.writeOutbound(DefaultResponse.RESPONSE_HELO));
         assertTrue(channel.finish());
         ByteBuf buf = channel.readOutbound();
         assertEquals("250 <hostname>\r\n", buf.toString(StandardCharsets.UTF_8));

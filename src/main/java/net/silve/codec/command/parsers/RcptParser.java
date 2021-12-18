@@ -2,7 +2,7 @@ package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.command.handler.InvalidProtocolException;
 
 public class RcptParser extends CommandParser {
@@ -35,7 +35,7 @@ public class RcptParser extends CommandParser {
         if (line.startsWith(PREFIX)) {
             return Pair.newInstance(AsciiString.EMPTY_STRING, line.subSequence(3));
         } else {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_BAD_RCPT_SYNTAX);
+            throw new InvalidProtocolException(DefaultResponse.RESPONSE_BAD_RCPT_SYNTAX);
         }
     }
 
@@ -43,7 +43,7 @@ public class RcptParser extends CommandParser {
         try {
             return parsePath(path);
         } catch (InvalidSyntaxException e) {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_BAD_RECIPIENT_SYNTAX);
+            throw new InvalidProtocolException(DefaultResponse.RESPONSE_BAD_RECIPIENT_SYNTAX);
         }
 
     }

@@ -13,7 +13,7 @@ import net.silve.codec.command.parsers.CommandParser;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 
 import java.util.Objects;
 
@@ -22,8 +22,8 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
     private static final ByteBuf DOT_CRLF_DELIMITER = Unpooled.wrappedBuffer(new byte[]{46, 13, 10});
     private static final CharSequence[] EMPTY_CHAR_SEQUENCE = {};
-    private static final InvalidProtocolException EXCEPTION_BAD_SYNTAX = new InvalidProtocolException(ConstantResponse.RESPONSE_BAD_SYNTAX);
-    private static final InvalidProtocolException EXCEPTION_UNKNOWN_COMMAND = new InvalidProtocolException(ConstantResponse.RESPONSE_UNKNOWN_COMMAND);
+    private static final InvalidProtocolException EXCEPTION_BAD_SYNTAX = new InvalidProtocolException(DefaultResponse.RESPONSE_BAD_SYNTAX);
+    private static final InvalidProtocolException EXCEPTION_UNKNOWN_COMMAND = new InvalidProtocolException(DefaultResponse.RESPONSE_UNKNOWN_COMMAND);
 
     private static final CommandMap commandMap = new CommandMap();
 

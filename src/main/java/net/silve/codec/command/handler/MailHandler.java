@@ -3,7 +3,7 @@ package net.silve.codec.command.handler;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.ConstantResponse;
+import net.silve.codec.response.DefaultResponse;
 import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
@@ -27,18 +27,18 @@ public class MailHandler implements CommandHandler {
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, final MessageSession session) throws InvalidProtocolException {
         if (session.isTransactionStarted()) {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_SENDER_ALREADY_SPECIFIED);
+            throw new InvalidProtocolException(DefaultResponse.RESPONSE_SENDER_ALREADY_SPECIFIED);
         }
 
         if (request.parameters().isEmpty()) {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_SENDER_NEEDED);
+            throw new InvalidProtocolException(DefaultResponse.RESPONSE_SENDER_NEEDED);
         }
 
         final CharSequence reversePath = request.parameters().get(0);
         if (reversePath.length() == 0) {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_BAD_MAIL_SYNTAX);
+            throw new InvalidProtocolException(DefaultResponse.RESPONSE_BAD_MAIL_SYNTAX);
         }
-        return new HandlerResult(ConstantResponse.RESPONSE_MAIL_FROM_OK, MessageSession::setReversePath);
+        return new HandlerResult(DefaultResponse.RESPONSE_MAIL_FROM_OK, MessageSession::setReversePath);
 
     }
 }

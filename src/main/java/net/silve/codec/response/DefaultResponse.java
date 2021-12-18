@@ -4,7 +4,8 @@ import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.util.AsciiString;
 
-public class ConstantResponse {
+public class DefaultResponse {
+
     public static final AsciiString HOSTNAME = AsciiString.of("<hostname>");
 
     public static final SmtpResponse RESPONSE_UNKNOWN_COMMAND = new DefaultSmtpResponse(502, AsciiString.of("5.5.2 Error: command not recognized"));
@@ -29,7 +30,7 @@ public class ConstantResponse {
     public static final SmtpResponse RESPONSE_RSET_OK = RESPONSE_MAIL_FROM_OK;
     public static final SmtpResponse RESPONSE_BYE = new DefaultSmtpResponse(221, AsciiString.of("2.0.0 Bye"));
 
-    private ConstantResponse() {
+    private DefaultResponse() {
     }
 
 }
