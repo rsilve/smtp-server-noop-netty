@@ -1,14 +1,17 @@
 package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
+import net.silve.codec.configuration.SmtpServerConfiguration;
+import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EHLOHandlerTest {
+
+    SmtpServerConfiguration configuration = new SmtpServerConfiguration(new SmtpServerConfigurationBuilder());
 
     @Test
     void shouldHaveName() {
@@ -18,14 +21,14 @@ class EHLOHandlerTest {
 
     @Test
     void shouldReturnResponse() {
-        HandlerResult handle = new EHLOHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO), MessageSession.newInstance());
-        assertEquals(ConstantResponse.RESPONSE_EHLO, handle.getResponse());
+        HandlerResult handle = new EHLOHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO), MessageSession.newInstance(), configuration);
+        assertEquals(configuration.responses.responseEhlo, handle.getResponse());
     }
 
     @Test
     void shouldReturnResponseWithTLS() {
-        HandlerResult handle = new EHLOHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO), MessageSession.newInstance().tlsEnabled());
-        assertEquals(ConstantResponse.RESPONSE_EHLO_STARTTLS, handle.getResponse());
+        HandlerResult handle = new EHLOHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO), MessageSession.newInstance().tlsEnabled(), configuration);
+        assertEquals(configuration.responses.responseEhloStarttls, handle.getResponse());
     }
 
 }

@@ -11,14 +11,15 @@ import net.silve.codec.command.handler.CommandHandler;
 import net.silve.codec.command.handler.DataContentHandler;
 import net.silve.codec.command.handler.HandlerResult;
 import net.silve.codec.command.handler.InvalidProtocolException;
+import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
 import net.silve.codec.ssl.SslUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
@@ -30,8 +31,15 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(SmtpRequestHandler.class);
 
     private static final CommandMap commandMap = new CommandMap();
+    private final SmtpServerConfiguration configuration;
 
     private MessageSession messageSession;
+
+    public SmtpRequestHandler(@Nonnull SmtpServerConfiguration configuration) {
+        super();
+        Objects.requireNonNull(configuration, "server configuration is required");
+        this.configuration = configuration;
+    }
 
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
@@ -43,7 +51,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         super.channelActive(ctx);
         logger.trace("[{}] connected", messageSession.getId());
 
-        final SmtpResponse response = ConstantResponse.RESPONSE_GREETING;
+        final SmtpResponse response = configuration.responses.responseGreeting;
         ctx.writeAndFlush(response);
 
     }
@@ -60,7 +68,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     private void readContent(ChannelHandlerContext ctx, Object msg) {
         DataContentHandler contentHandler = DataContentHandler.singleton();
         try {
-            HandlerResult result = contentHandler.handle(msg, messageSession);
+            HandlerResult result = contentHandler.handle(msg, messageSession, configuration);
             if (!Objects.isNull(result)) {
                 ctx.writeAndFlush(result.getResponse());
             }
@@ -77,7 +85,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         try {
             final SmtpCommand command = request.command();
             final CommandHandler commandHandler = commandMap.getHandler(command.name());
-            HandlerResult result = commandHandler.response(request, messageSession);
+            HandlerResult result = commandHandler.response(request, messageSession, configuration);
             result.getSessionAction().execute(messageSession);
             result.getAction().execute(ctx);
             logger.trace("[{}] Request: {}, Response: {}", messageSession.getId(), request, result.getResponse());
@@ -88,7 +96,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         } catch (InvalidProtocolException e) {
             ctx.writeAndFlush(e.getResponse());
         } catch (Exception e) {
-            ctx.writeAndFlush(ConstantResponse.RESPONSE_UNKNOWN_COMMAND);
+            ctx.writeAndFlush(configuration.responses.responseUnknownCommand);
         } finally {
             request.recycle();
         }

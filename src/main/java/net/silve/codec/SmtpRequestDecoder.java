@@ -10,11 +10,12 @@ import io.netty.util.CharsetUtil;
 import net.silve.codec.command.CommandMap;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.command.parsers.CommandParser;
+import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.ConstantResponse;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 
@@ -22,15 +23,19 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
     private static final ByteBuf DOT_CRLF_DELIMITER = Unpooled.wrappedBuffer(new byte[]{46, 13, 10});
     private static final CharSequence[] EMPTY_CHAR_SEQUENCE = {};
-    private static final InvalidProtocolException EXCEPTION_BAD_SYNTAX = new InvalidProtocolException(ConstantResponse.RESPONSE_BAD_SYNTAX);
-    private static final InvalidProtocolException EXCEPTION_UNKNOWN_COMMAND = new InvalidProtocolException(ConstantResponse.RESPONSE_UNKNOWN_COMMAND);
-
     private static final CommandMap commandMap = new CommandMap();
+    private final InvalidProtocolException exceptionBadSyntax;
+    private final InvalidProtocolException exceptionUnknownCommand;
+    private final SmtpServerConfiguration configuration;
 
     private boolean contentExpected = false;
 
-    public SmtpRequestDecoder() {
+    public SmtpRequestDecoder(@Nonnull SmtpServerConfiguration configuration) {
         super(true);
+        Objects.requireNonNull(configuration, "configuration is required");
+        this.configuration = configuration;
+        exceptionBadSyntax = new InvalidProtocolException(configuration.responses.responseBadSyntax);
+        exceptionUnknownCommand = new InvalidProtocolException(configuration.responses.responseUnknownCommand);
     }
 
     @Override
@@ -70,11 +75,11 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     private RecyclableSmtpRequest parseLine(ByteBuf frame) throws InvalidProtocolException {
         int readable = frame.readableBytes();
         if (readable < 6) {
-            throw EXCEPTION_UNKNOWN_COMMAND;
+            throw exceptionUnknownCommand;
         }
         CharSequence detail = frame.isReadable() ? frame.toString(CharsetUtil.US_ASCII) : null;
         if (Objects.isNull(detail)) {
-            throw EXCEPTION_BAD_SYNTAX;
+            throw exceptionBadSyntax;
         }
 
         final CharSequence command = getCommand(detail);
@@ -95,6 +100,6 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
         if (Objects.isNull(parser)) {
             return EMPTY_CHAR_SEQUENCE;
         }
-        return parser.parse(line.subSequence(4, line.length()));
+        return parser.parse(line.subSequence(4, line.length()), configuration);
     }
 }

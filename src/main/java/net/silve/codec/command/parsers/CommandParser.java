@@ -3,14 +3,13 @@ package net.silve.codec.command.parsers;
 
 import io.netty.util.AsciiString;
 import net.silve.codec.command.handler.InvalidProtocolException;
+import net.silve.codec.configuration.SmtpServerConfiguration;
+
+import javax.annotation.Nonnull;
 
 public abstract class CommandParser {
 
     protected static final CharSequence[] EMTPY = {};
-
-    public abstract CharSequence getName();
-
-    public abstract CharSequence[] parse(CharSequence line) throws InvalidProtocolException;
 
     public static Pair parsePath(AsciiString path) throws InvalidSyntaxException {
         AsciiString next = path;
@@ -26,6 +25,10 @@ public abstract class CommandParser {
         }
         throw new InvalidSyntaxException(String.format("'<path>' required in '%s'", next));
     }
+
+    public abstract CharSequence getName();
+
+    public abstract CharSequence[] parse(CharSequence line, @Nonnull SmtpServerConfiguration configuration) throws InvalidProtocolException;
 
 
 }

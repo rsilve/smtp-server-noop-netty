@@ -2,14 +2,17 @@ package net.silve.codec.command.parsers;
 
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
-import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.command.handler.InvalidProtocolException;
+import net.silve.codec.configuration.SmtpServerConfiguration;
+import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class RcptParserTest {
+
+    SmtpServerConfiguration configuration = new SmtpServerConfiguration(new SmtpServerConfigurationBuilder());
 
     @Test
     void shouldHaveAName() {
@@ -19,14 +22,14 @@ class RcptParserTest {
 
     @Test
     void shouldParseFrom() throws InvalidProtocolException {
-        CharSequence[] parsed = RcptParser.singleton().parse("TO:<name@domain.tld>");
+        CharSequence[] parsed = RcptParser.singleton().parse("TO:<name@domain.tld>", configuration);
         assertEquals(1, parsed.length);
         assertEquals(AsciiString.of("name@domain.tld"), parsed[0]);
     }
 
     @Test
     void shouldParseFromWithExtension() throws InvalidProtocolException {
-        CharSequence[] parsed = RcptParser.singleton().parse("TO:<name@domain.tld> extension");
+        CharSequence[] parsed = RcptParser.singleton().parse("TO:<name@domain.tld> extension", configuration);
         assertEquals(1, parsed.length);
         assertEquals(AsciiString.of("name@domain.tld"), parsed[0]);
     }
@@ -34,10 +37,10 @@ class RcptParserTest {
     @Test
     void shouldPThrowExceptionIfInvalidCommand() {
         try {
-            RcptParser.singleton().parse("T:<name@domain.tld> extension");
+            RcptParser.singleton().parse("T:<name@domain.tld> extension", configuration);
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(ConstantResponse.RESPONSE_BAD_RCPT_SYNTAX, e.getResponse());
+            assertEquals(configuration.responses.responseBadRcptSyntax, e.getResponse());
         }
 
     }
@@ -45,10 +48,10 @@ class RcptParserTest {
     @Test
     void shouldPThrowExceptionIfInvalidForwardPath() {
         try {
-            RcptParser.singleton().parse("TO:<name@domain");
+            RcptParser.singleton().parse("TO:<name@domain", configuration);
             fail();
         } catch (InvalidProtocolException e) {
-            assertEquals(ConstantResponse.RESPONSE_BAD_RECIPIENT_SYNTAX, e.getResponse());
+            assertEquals(configuration.responses.responseBadRecipientSyntax, e.getResponse());
         }
 
     }

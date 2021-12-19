@@ -1,16 +1,14 @@
 package net.silve.codec.command.handler;
 
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
+import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.response.ConstantResponse;
 import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
 
-@SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 public class RcptHandler implements CommandHandler {
 
     private static final RcptHandler instance = new RcptHandler();
@@ -26,18 +24,18 @@ public class RcptHandler implements CommandHandler {
 
     @Nonnull
     @Override
-    public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session) throws InvalidProtocolException {
+    public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) throws InvalidProtocolException {
         if (!session.isTransactionStarted()) {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_SENDER_NEEDED);
+            throw new InvalidProtocolException(configuration.responses.responseSenderNeeded);
         }
         if (session.tooManyForward(50)) {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_TOO_MANY_RECIPIENTS);
+            throw new InvalidProtocolException(configuration.responses.responseTooManyRecipients);
         }
         if (request.parameters().isEmpty()) {
-            throw new InvalidProtocolException(ConstantResponse.RESPONSE_RECIPIENT_NEEDED);
+            throw new InvalidProtocolException(configuration.responses.responseRecipientNeeded);
         }
         session.addForwardPath(AsciiString.of(request.parameters().get(0)));
-        return new HandlerResult(ConstantResponse.RESPONSE_RCPT_OK, (MessageSession session1) -> session1.addForwardPath(AsciiString.of(request.parameters().get(0))));
+        return new HandlerResult(configuration.responses.responseRcptOk, (MessageSession session1) -> session1.addForwardPath(AsciiString.of(request.parameters().get(0))));
     }
 
 }
