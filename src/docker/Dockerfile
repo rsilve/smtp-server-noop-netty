@@ -1,13 +1,15 @@
 FROM openjdk:14.0-slim
 
+RUN groupadd -r smtp && useradd -r -s /bin/false -g smtp smtp
+WORKDIR /work
+
 ENV DEBIAN_FRONTEND noninteractive
 
 COPY target/appassembler/ /work/
-
-COPY src/docker/logback.xml /work/logback.xml
 COPY src/docker/entrypoint.sh /work/entrypoint.sh
 
-WORKDIR /work
+RUN chown -R smtp:smtp /work
+USER smtp
 
 EXPOSE 2525/tcp
 

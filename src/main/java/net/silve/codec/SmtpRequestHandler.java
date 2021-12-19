@@ -12,15 +12,16 @@ import net.silve.codec.command.handler.DataContentHandler;
 import net.silve.codec.command.handler.HandlerResult;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.configuration.SmtpServerConfiguration;
+import net.silve.codec.logger.LoggerFactory;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import net.silve.codec.ssl.SslUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -28,7 +29,7 @@ import java.util.Objects;
  */
 public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(SmtpRequestHandler.class);
+    private static final Logger logger = LoggerFactory.getInstance();
 
     private static final CommandMap commandMap = new CommandMap();
     private final SmtpServerConfiguration configuration;
@@ -49,7 +50,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         }
 
         super.channelActive(ctx);
-        logger.trace("[{}] connected", messageSession.getId());
+        logger.log(Level.FINE, "[{0}] connected", messageSession.getId());
 
         final SmtpResponse response = configuration.responses.responseGreeting;
         ctx.writeAndFlush(response);
@@ -88,7 +89,6 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             HandlerResult result = commandHandler.response(request, messageSession, configuration);
             result.getSessionAction().execute(messageSession);
             result.getAction().execute(ctx);
-            logger.trace("[{}] Request: {}, Response: {}", messageSession.getId(), request, result.getResponse());
             final ChannelFuture channelFuture = ctx.writeAndFlush(result.getResponse());
             if (result.getResponse().code() == 221 || result.getResponse().code() == 421) {
                 channelFuture.addListener(ChannelFutureListener.CLOSE);
