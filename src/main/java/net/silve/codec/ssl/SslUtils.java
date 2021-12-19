@@ -2,11 +2,10 @@ package net.silve.codec.ssl;
 
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.SelfSignedCertificate;
 import net.silve.codec.logger.LoggerFactory;
 
 import javax.net.ssl.SSLException;
-import java.security.cert.CertificateException;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,11 +23,10 @@ public class SslUtils {
         tlsEnabled = useTls;
         if (tlsEnabled) {
             try {
-                SelfSignedCertificate ssc = new SelfSignedCertificate();
-                sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
-                logger.log(Level.INFO, "SSL context initialized DN: ''{0}''", ssc.cert().getIssuerDN());
-            } catch (CertificateException e) {
-                logger.log(Level.SEVERE, "Failed to initialize self signed certificate", e);
+                File chain = new File("fullchain.pem");
+                File key = new File("privkey.pem");
+                sslCtx = SslContextBuilder.forServer(chain, key).build();
+                logger.log(Level.INFO, "SSL context initialized");
             } catch (SSLException e) {
                 logger.log(Level.SEVERE, "Failed to initialize TLS context", e);
             }
@@ -44,4 +42,6 @@ public class SslUtils {
     public static SslContext getSslCtx() {
         return sslCtx;
     }
+
+
 }

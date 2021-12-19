@@ -3,13 +3,11 @@ package net.silve.codec.command.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.smtp.SmtpCommand;
-import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AsciiString;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
-import net.silve.codec.ssl.SslUtils;
 
 import javax.annotation.Nonnull;
 import javax.net.ssl.SSLEngine;
@@ -18,11 +16,6 @@ public class StartTlsHandler implements CommandHandler {
 
     public static final SmtpCommand STARTTLS = SmtpCommand.valueOf(AsciiString.cached("STAR"));
     private static final StartTlsHandler instance = new StartTlsHandler();
-    private final SslContext sslCtx;
-
-    public StartTlsHandler() {
-        this.sslCtx = SslUtils.getSslCtx();
-    }
 
     public static StartTlsHandler singleton() {
         return instance;
@@ -37,7 +30,7 @@ public class StartTlsHandler implements CommandHandler {
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
         return new HandlerResult(configuration.responses.responseStarttls, (ChannelHandlerContext ctx1) -> {
-            final SSLEngine sslEngine = sslCtx.newEngine(ctx1.channel().alloc());
+            final SSLEngine sslEngine = configuration.getTls().getSslCtx().newEngine(ctx1.channel().alloc());
             ctx1.pipeline().addFirst(new SslHandler(sslEngine, true));
         });
     }

@@ -3,11 +3,13 @@ package net.silve.codec.command.handler;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
+import net.silve.codec.configuration.SmtpServerConfigurationTls;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 class EHLOHandlerTest {
 
@@ -27,7 +29,11 @@ class EHLOHandlerTest {
 
     @Test
     void shouldReturnResponseWithTLS() {
-        HandlerResult handle = new EHLOHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO), MessageSession.newInstance().tlsEnabled(), configuration);
+        SmtpServerConfiguration spy = spy(configuration);
+        SmtpServerConfigurationTls mock = mock(SmtpServerConfigurationTls.class);
+        when(mock.isEnabled()).thenReturn(true);
+        when(spy.getTls()).thenReturn(mock);
+        HandlerResult handle = new EHLOHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO), MessageSession.newInstance(), spy);
         assertEquals(configuration.responses.responseEhloStarttls, handle.getResponse());
     }
 

@@ -10,7 +10,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
 import net.silve.codec.logger.LoggerFactory;
-import net.silve.codec.ssl.SslUtils;
 import picocli.CommandLine;
 
 import javax.annotation.Nonnull;
@@ -34,6 +33,14 @@ public class SmtpServer implements Callable<Integer> {
             description = "enable STARTTLS (default: ${DEFAULT-VALUE})")
     boolean tls = false;
 
+    @CommandLine.Option(names = {"--tls-cert"}, paramLabel = "tls-cert",
+            description = "set certificate file for TLS")
+    String tlsCert;
+
+    @CommandLine.Option(names = {"--tls-key"}, paramLabel = "tls-key",
+            description = "set key file for TLS")
+    String tlsKey;
+
     @CommandLine.Option(names = {"--banner"}, paramLabel = "banner",
             description = "set SMTP greeting banner (default: ${DEFAULT-VALUE})")
     String banner = "no-op ESMTP";
@@ -50,8 +57,7 @@ public class SmtpServer implements Callable<Integer> {
 
     public void run() throws InterruptedException, UnknownHostException {
         SmtpServerConfiguration configuration = configure();
-        SslUtils.initialize(this.tls);
-
+       
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -81,7 +87,10 @@ public class SmtpServer implements Callable<Integer> {
     public SmtpServerConfiguration configure() throws UnknownHostException {
         SmtpServerConfigurationBuilder builder = new SmtpServerConfigurationBuilder()
                 .setBanner(banner)
-                .setHostname(hostname);
+                .setHostname(hostname)
+                .setTls(tls)
+                .setTlsCert(tlsCert)
+                .setTlsKey(tlsKey);
         return new SmtpServerConfiguration(builder);
     }
 }

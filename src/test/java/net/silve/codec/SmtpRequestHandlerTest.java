@@ -6,15 +6,16 @@ import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpResponse;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
+import net.silve.codec.configuration.SmtpServerConfigurationTls;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
-import net.silve.codec.ssl.SslUtils;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class SmtpRequestHandlerTest {
 
@@ -51,8 +52,12 @@ class SmtpRequestHandlerTest {
 
     @Test
     void shouldReturnResponseOnCommand003() {
-        SslUtils.initialize(true);
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
+        SmtpServerConfiguration spy = spy(configuration);
+        SmtpServerConfigurationTls mock = mock(SmtpServerConfigurationTls.class);
+        when(mock.isEnabled()).thenReturn(true);
+        when(spy.getTls()).thenReturn(mock);
+
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(spy));
         SmtpResponse response = channel.readOutbound();
         assertEquals(configuration.responses.responseGreeting, response);
         assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO)));

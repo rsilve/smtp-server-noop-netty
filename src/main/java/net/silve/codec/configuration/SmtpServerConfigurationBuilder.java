@@ -15,6 +15,9 @@ public class SmtpServerConfigurationBuilder {
     private Map<String, SmtpResponse> responseMap = defaultResponsesMap;
     private String banner = "no-op ESMTP";
     private String hostname = "<hostname>";
+    private boolean tls;
+    private String tlsCert;
+    private String tlsKey;
 
     public SmtpServerConfigurationBuilder() {
         /* empty */
@@ -59,6 +62,33 @@ public class SmtpServerConfigurationBuilder {
         }
 
         this.hostname = hostName;
+        return this;
+    }
+
+    public boolean isTls() {
+        return tls;
+    }
+
+    public SmtpServerConfigurationBuilder setTls(boolean tls) {
+        this.tls = tls;
+        return this;
+    }
+
+    public String getTlsCert() {
+        return tlsCert;
+    }
+
+    public SmtpServerConfigurationBuilder setTlsCert(String tlsCert) {
+        this.tlsCert = tlsCert;
+        return this;
+    }
+
+    public String getTlsKey() {
+        return tlsKey;
+    }
+
+    public SmtpServerConfigurationBuilder setTlsKey(String tlsKey) {
+        this.tlsKey = tlsKey;
         return this;
     }
 }
