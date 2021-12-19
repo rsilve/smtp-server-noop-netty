@@ -50,7 +50,7 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
     }
 
     public List<CharSequence> parameters() {
-        return this.parameters;
+        return Collections.unmodifiableList(this.parameters);
     }
 
 }
