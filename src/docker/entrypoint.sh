@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-/work/bin/app
+/work/bin/app "$@"
