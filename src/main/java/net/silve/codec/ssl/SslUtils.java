@@ -3,15 +3,16 @@ package net.silve.codec.ssl;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.silve.codec.logger.LoggerFactory;
 
 import javax.net.ssl.SSLException;
 import java.security.cert.CertificateException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SslUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(SslUtils.class);
+    private static final Logger logger = LoggerFactory.getInstance();
 
     private static SslContext sslCtx;
     private static boolean tlsEnabled;
@@ -25,11 +26,11 @@ public class SslUtils {
             try {
                 SelfSignedCertificate ssc = new SelfSignedCertificate();
                 sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
-                logger.info("SSL context initialized DN: '{}'", ssc.cert().getIssuerDN());
+                logger.log(Level.INFO, "SSL context initialized DN: ''{0}''", ssc.cert().getIssuerDN());
             } catch (CertificateException e) {
-                logger.error("Failed to initialize self signed certificate", e);
+                logger.log(Level.SEVERE, "Failed to initialize self signed certificate", e);
             } catch (SSLException e) {
-                logger.error("Failed to initialize TLS context", e);
+                logger.log(Level.SEVERE, "Failed to initialize TLS context", e);
             }
         } else {
             sslCtx = null;
