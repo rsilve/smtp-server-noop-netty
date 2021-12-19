@@ -2,6 +2,7 @@ package net.silve.codec.configuration;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 import static net.silve.codec.configuration.DefaultResponse.defaultResponsesMap;
@@ -11,6 +12,7 @@ public class SmtpServerConfigurationBuilder {
     private int port;
     private Map<String, SmtpResponse> responseMap = defaultResponsesMap;
     private String banner = "no-op ESMTP";
+    private String hostname = "<hostname>";
 
     public SmtpServerConfigurationBuilder() {
         /* empty */
@@ -40,6 +42,15 @@ public class SmtpServerConfigurationBuilder {
 
     public SmtpServerConfigurationBuilder setBanner(String banner) {
         this.banner = banner;
+        return this;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    public SmtpServerConfigurationBuilder setHostname(@Nonnull String hostname) {
+        this.hostname = hostname;
         return this;
     }
 }

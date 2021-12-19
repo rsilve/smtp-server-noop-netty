@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SmtpServerConfigurationResponsesTest {
 
-    SmtpServerConfigurationResponses responses = new SmtpServerConfigurationResponses(DefaultResponse.defaultResponsesMap, "banner");
+    SmtpServerConfigurationResponses responses = new SmtpServerConfigurationResponses(DefaultResponse.defaultResponsesMap, "banner", "hostname");
 
     @Test
     void shouldReturnResponseUnknownCommand() {
@@ -35,14 +35,14 @@ class SmtpServerConfigurationResponsesTest {
     void shouldReturnResponseEHLO() {
         SmtpResponse response = responses.responseEhlo;
         assertEquals(250, response.code());
-        assertEquals(AsciiString.of("<hostname>"), response.details().get(0));
+        assertEquals(AsciiString.of("hostname"), response.details().get(0));
     }
 
     @Test
     void shouldReturnResponseHelo() {
         SmtpResponse response = responses.responseHelo;
         assertEquals(250, response.code());
-        assertEquals(AsciiString.of("<hostname>"), response.details().get(0));
+        assertEquals(AsciiString.of("hostname"), response.details().get(0));
     }
 
     @Test

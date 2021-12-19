@@ -33,13 +33,14 @@ class DefaultResponse {
     public static final AsciiString HOSTNAME = AsciiString.of("<hostname>");
 
     public static final String OK = "2.5.1 Ok";
-    
+
+    public static final AsciiString SIZE = AsciiString.of("SIZE 20480000");
     public static final Map<String, SmtpResponse> defaultResponsesMap = Map.ofEntries(
             Map.entry(RESPONSE_UNKNOWN_COMMAND_NAME, new DefaultSmtpResponse(502, AsciiString.of("5.5.2 Error: command not recognized"))),
             Map.entry(RESPONSE_BAD_SYNTAX_NAME, new DefaultSmtpResponse(500, AsciiString.of("5.5.2 Error: bad syntax"))),
             Map.entry(RESPONSE_GREETING_NAME, new DefaultSmtpResponse(220, AsciiString.of("silve.net ESMTP"))),
-            Map.entry(RESPONSE_EHLO_NAME, new DefaultSmtpResponse(250, HOSTNAME, AsciiString.of("SIZE 20480000"))),
-            Map.entry(RESPONSE_EHLO_STARTTLS_NAME, new DefaultSmtpResponse(250, HOSTNAME, AsciiString.of("SIZE 20480000"), AsciiString.of("STARTTLS"))),
+            Map.entry(RESPONSE_EHLO_NAME, new DefaultSmtpResponse(250, HOSTNAME, SIZE)),
+            Map.entry(RESPONSE_EHLO_STARTTLS_NAME, new DefaultSmtpResponse(250, HOSTNAME, SIZE, AsciiString.of("STARTTLS"))),
             Map.entry(RESPONSE_HELO_NAME, new DefaultSmtpResponse(250, HOSTNAME)),
             Map.entry(RESPONSE_STARTTLS_NAME, new DefaultSmtpResponse(220, AsciiString.of("Ready to start TLS"))),
             Map.entry(RESPONSE_EMPTY_NAME, new DefaultSmtpResponse(500, AsciiString.of("SMTP Command required"))),

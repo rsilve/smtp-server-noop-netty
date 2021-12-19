@@ -34,8 +34,10 @@ public class SmtpServerConfigurationResponses {
     public final SmtpResponse responseBadSyntax;
     public final SmtpResponse responseUnknownCommand;
 
-    public SmtpServerConfigurationResponses(@Nonnull Map<String, SmtpResponse> map, String banner) {
+    public SmtpServerConfigurationResponses(@Nonnull Map<String, SmtpResponse> map, @Nonnull String banner, @Nonnull String hostname) {
         Objects.requireNonNull(map, "responses map is required");
+        Objects.requireNonNull(banner, "banner is required");
+        Objects.requireNonNull(hostname, "hostname is required");
         responseBye = map.get(RESPONSE_BYE_NAME);
         responseEndDataMessage = map.get(RESPONSE_END_DATA_MESSAGE_NAME);
         responseRecipientNeeded = map.get(RESPONSE_RECIPIENT_NEEDED_NAME);
@@ -51,13 +53,13 @@ public class SmtpServerConfigurationResponses {
         responseSenderAlreadySpecified = map.get(RESPONSE_SENDER_ALREADY_SPECIFIED_NAME);
         responseEmpty = map.get(RESPONSE_EMPTY_NAME);
         responseStarttls = map.get(RESPONSE_STARTTLS_NAME);
-        responseHelo = map.get(RESPONSE_HELO_NAME);
-        responseEhloStarttls = map.get(RESPONSE_EHLO_STARTTLS_NAME);
-        responseEhlo = map.get(RESPONSE_EHLO_NAME);
         responseBadSyntax = map.get(RESPONSE_BAD_SYNTAX_NAME);
         responseUnknownCommand = map.get(RESPONSE_UNKNOWN_COMMAND_NAME);
 
         responseGreeting = new DefaultSmtpResponse(220, AsciiString.of(banner));
+        responseHelo = new DefaultSmtpResponse(250, AsciiString.of(hostname));
+        responseEhloStarttls = new DefaultSmtpResponse(250, AsciiString.of(hostname), SIZE, AsciiString.of("STARTTLS"));
+        responseEhlo = new DefaultSmtpResponse(250, AsciiString.of(hostname), SIZE);
     }
 
 
