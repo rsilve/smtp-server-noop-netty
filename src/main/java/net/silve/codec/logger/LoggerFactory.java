@@ -12,6 +12,8 @@ public class LoggerFactory {
 
     static {
         logger.addHandler(handler);
+        logger.setLevel(Level.INFO);
+        handler.setLevel(Level.INFO);
         logger.setUseParentHandlers(false);
     }
 
