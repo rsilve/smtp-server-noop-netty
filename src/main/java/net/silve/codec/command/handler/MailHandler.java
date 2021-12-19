@@ -1,6 +1,5 @@
 package net.silve.codec.command.handler;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableSmtpRequest;
@@ -8,8 +7,6 @@ import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
 
-
-@SuppressFBWarnings("RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE")
 public class MailHandler implements CommandHandler {
 
     private static final MailHandler instance = new MailHandler();
