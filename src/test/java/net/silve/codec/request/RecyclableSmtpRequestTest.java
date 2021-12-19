@@ -16,7 +16,7 @@ class RecyclableSmtpRequestTest {
         assertTrue(instance.parameters().isEmpty());
         instance.recycle();
         assertNull(instance.command());
-        assertNull(instance.parameters());
+        assertTrue(instance.parameters().isEmpty());
 
     }
 
