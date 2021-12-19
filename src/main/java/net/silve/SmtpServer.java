@@ -15,9 +15,7 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import javax.annotation.Nonnull;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "smtp-noop", mixinStandardHelpOptions = true,
@@ -79,15 +77,9 @@ public class SmtpServer implements Callable<Integer> {
 
     @Nonnull
     public SmtpServerConfiguration configure() throws UnknownHostException {
-        String hostName = hostname;
-
-        if (Objects.isNull(hostName) || hostName.isBlank()) {
-            hostName = InetAddress.getLocalHost().getHostName();
-        }
-
         SmtpServerConfigurationBuilder builder = new SmtpServerConfigurationBuilder()
                 .setBanner(banner)
-                .setHostname(hostName);
+                .setHostname(hostname);
         return new SmtpServerConfiguration(builder);
     }
 }

@@ -2,8 +2,10 @@ package net.silve.codec.configuration;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
 
-import javax.annotation.Nonnull;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.Objects;
 
 import static net.silve.codec.configuration.DefaultResponse.defaultResponsesMap;
 
@@ -49,8 +51,14 @@ public class SmtpServerConfigurationBuilder {
         return hostname;
     }
 
-    public SmtpServerConfigurationBuilder setHostname(@Nonnull String hostname) {
-        this.hostname = hostname;
+    public SmtpServerConfigurationBuilder setHostname(String hostname) throws UnknownHostException {
+        String hostName = hostname;
+
+        if (Objects.isNull(hostName) || hostName.isBlank()) {
+            hostName = InetAddress.getLocalHost().getHostName();
+        }
+
+        this.hostname = hostName;
         return this;
     }
 }
