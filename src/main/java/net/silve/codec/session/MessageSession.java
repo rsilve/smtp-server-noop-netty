@@ -20,7 +20,6 @@ public class MessageSession {
     private boolean transactionStarted = false;
     private long startedAt = System.nanoTime();
     private long completedAt = 0L;
-    private boolean isTlsEnabled;
 
     private MessageSession(Recycler.Handle<MessageSession> handle) {
         this.handle = handle;
@@ -81,12 +80,4 @@ public class MessageSession {
         return this.completedAt - this.startedAt;
     }
 
-    public boolean isTlsEnabled() {
-        return isTlsEnabled;
-    }
-
-    public MessageSession tlsEnabled() {
-        isTlsEnabled = true;
-        return this;
-    }
 }

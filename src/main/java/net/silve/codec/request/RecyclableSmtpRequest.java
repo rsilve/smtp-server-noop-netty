@@ -8,6 +8,7 @@ import io.netty.util.internal.ObjectUtil;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public final class RecyclableSmtpRequest implements SmtpRequest {
 
@@ -50,7 +51,10 @@ public final class RecyclableSmtpRequest implements SmtpRequest {
     }
 
     public List<CharSequence> parameters() {
-        return this.parameters;
+        if (Objects.isNull(this.parameters)) {
+            return Collections.emptyList();
+        }
+        return Collections.unmodifiableList(this.parameters);
     }
 
 }
