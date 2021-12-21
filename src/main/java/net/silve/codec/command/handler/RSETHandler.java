@@ -23,7 +23,7 @@ public class RSETHandler implements CommandHandler {
     @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
-        return HandlerResult.from(configuration.responses.responseRsetOk);
+        return new HandlerResult(configuration.responses.responseRsetOk, MessageSession::reset);
     }
 }
 

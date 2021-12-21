@@ -37,7 +37,7 @@ public class MessageSession {
         handle.recycle(this);
     }
 
-    private void reset() {
+    public void reset() {
         this.id = MessageSessionId.generate();
         forwardPath = new ArrayList<>();
         transactionStarted = false;

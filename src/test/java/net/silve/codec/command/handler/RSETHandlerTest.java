@@ -8,6 +8,8 @@ import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class RSETHandlerTest {
 
@@ -23,6 +25,9 @@ class RSETHandlerTest {
     void shouldExecute() {
         HandlerResult handle = new RSETHandler().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.EHLO), MessageSession.newInstance(), configuration);
         assertEquals(configuration.responses.responseRsetOk, handle.getResponse());
+        MessageSession mock = mock(MessageSession.class);
+        handle.getSessionAction().execute(mock);
+        verify(mock).reset();
     }
 
 }
