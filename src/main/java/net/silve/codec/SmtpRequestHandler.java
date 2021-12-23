@@ -12,22 +12,18 @@ import net.silve.codec.command.handler.DataContentHandler;
 import net.silve.codec.command.handler.HandlerResult;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.configuration.SmtpServerConfiguration;
-import net.silve.codec.logger.LoggerFactory;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 
 /**
  * Handles a server-side channel.
  */
 public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
-
-    private static final Logger logger = LoggerFactory.getInstance();
 
     private static final CommandMap commandMap = new CommandMap();
     private final SmtpServerConfiguration configuration;
@@ -103,6 +99,6 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        ctx.close();
+        ctx.writeAndFlush(configuration.responses.responseServerError).addListener(ChannelFutureListener.CLOSE);
     }
 }

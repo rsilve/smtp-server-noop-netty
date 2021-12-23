@@ -33,6 +33,7 @@ public class SmtpServerConfigurationResponses {
     public final SmtpResponse responseGreeting;
     public final SmtpResponse responseBadSyntax;
     public final SmtpResponse responseUnknownCommand;
+    public final SmtpResponse responseDataOk;
 
     public SmtpServerConfigurationResponses(@Nonnull Map<String, SmtpResponse> map, @Nonnull String banner, @Nonnull String hostname) {
         Objects.requireNonNull(map, "responses map is required");
@@ -41,6 +42,7 @@ public class SmtpServerConfigurationResponses {
         responseServerError = map.get(RESPONSE_SERVER_ERROR_NAME);
         responseBye = map.get(RESPONSE_BYE_NAME);
         responseEndDataMessage = map.get(RESPONSE_END_DATA_MESSAGE_NAME);
+        responseDataOk = map.get(RESPONSE_DATA_OK_NAME);
         responseRecipientNeeded = map.get(RESPONSE_RECIPIENT_NEEDED_NAME);
         responseBadRcptSyntax = map.get(RESPONSE_BAD_RCPT_SYNTAX_NAME);
         responseBadRecipientSyntax = map.get(RESPONSE_BAD_RECIPIENT_SYNTAX_NAME);

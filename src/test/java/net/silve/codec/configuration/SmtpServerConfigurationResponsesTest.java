@@ -137,10 +137,17 @@ class SmtpServerConfigurationResponsesTest {
     }
 
     @Test
-    void shouldReturnResponseserverError() {
+    void shouldReturnResponseServerError() {
         SmtpResponse response = responses.responseServerError;
         assertEquals(421, response.code());
         assertEquals(AsciiString.of("5.3.0 Internal server error"), response.details().get(0));
+    }
+
+    @Test
+    void shouldReturnResponseDataOk() {
+        SmtpResponse response = responses.responseDataOk;
+        assertEquals(250, response.code());
+        assertEquals(AsciiString.of("2.0.0 Ok queued"), response.details().get(0));
     }
 
 }

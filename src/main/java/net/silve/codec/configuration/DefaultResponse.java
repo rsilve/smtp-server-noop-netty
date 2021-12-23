@@ -28,6 +28,7 @@ class DefaultResponse {
     public static final String RESPONSE_BAD_RCPT_SYNTAX_NAME = "RESPONSE_BAD_RCPT_SYNTAX_NAME";
     public static final String RESPONSE_RECIPIENT_NEEDED_NAME = "RESPONSE_RECIPIENT_NEEDED_NAME";
     public static final String RESPONSE_END_DATA_MESSAGE_NAME = "RESPONSE_END_DATA_MESSAGE_NAME";
+    public static final String RESPONSE_DATA_OK_NAME = "RESPONSE_DATA_OK_NAME";
     public static final String RESPONSE_BYE_NAME = "RESPONSE_BYE_NAME";
 
     public static final AsciiString HOSTNAME = AsciiString.of("<hostname>");
@@ -55,6 +56,7 @@ class DefaultResponse {
             Map.entry(RESPONSE_RECIPIENT_NEEDED_NAME, new DefaultSmtpResponse(503, AsciiString.of("5.5.1 Error: need RCPT command"))),
             Map.entry(RESPONSE_RCPT_OK_NAME, new DefaultSmtpResponse(250, AsciiString.of(OK))),
             Map.entry(RESPONSE_END_DATA_MESSAGE_NAME, new DefaultSmtpResponse(354, AsciiString.of("End data with <CR><LF>.<CR><LF>"))),
+            Map.entry(RESPONSE_DATA_OK_NAME, new DefaultSmtpResponse(250, AsciiString.of("2.0.0 Ok queued"))),
             Map.entry(RESPONSE_RSET_OK_NAME, new DefaultSmtpResponse(250, AsciiString.of(OK))),
             Map.entry(RESPONSE_BYE_NAME, new DefaultSmtpResponse(221, AsciiString.of("2.0.0 Bye")))
     );

@@ -1,6 +1,5 @@
 package net.silve.codec.command.handler;
 
-import io.netty.handler.codec.smtp.DefaultSmtpResponse;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.request.RecyclableLastSmtpContent;
 import net.silve.codec.session.MessageSession;
@@ -27,7 +26,7 @@ public class DataContentHandler {
         if (content instanceof RecyclableLastSmtpContent) {
             session.completed();
             return new HandlerResult(
-                    new DefaultSmtpResponse(250, String.format("2.0.0 Ok: queued as %s", session.getId())),
+                    configuration.responses.responseDataOk,
                     MessageSession::completed);
         } else {
             return null;
