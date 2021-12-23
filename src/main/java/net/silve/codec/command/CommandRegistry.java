@@ -17,8 +17,7 @@ public enum CommandRegistry {
     RSET(RSETHandler.singleton()),
     STARTTLS(StartTlsHandler.singleton()),
     VRFY(QUITHandler.singleton()),
-    EXPN(QUITHandler.singleton()),
-    EMTPY(EmptyHandler.singleton());
+    EXPN(QUITHandler.singleton());
 
     private final CommandHandler command;
     private final CommandParser parser;

@@ -25,7 +25,6 @@ public class SmtpServerConfigurationResponses {
     public final SmtpResponse responseBadSenderSyntax;
     public final SmtpResponse responseSenderNeeded;
     public final SmtpResponse responseSenderAlreadySpecified;
-    public final SmtpResponse responseEmpty;
     public final SmtpResponse responseStarttls;
     public final SmtpResponse responseHelo;
     public final SmtpResponse responseEhloStarttls;
@@ -51,7 +50,6 @@ public class SmtpServerConfigurationResponses {
         responseBadSenderSyntax = map.get(RESPONSE_BAD_SENDER_SYNTAX_NAME);
         responseSenderNeeded = map.get(RESPONSE_SENDER_NEEDED_NAME);
         responseSenderAlreadySpecified = map.get(RESPONSE_SENDER_ALREADY_SPECIFIED_NAME);
-        responseEmpty = map.get(RESPONSE_EMPTY_NAME);
         responseStarttls = map.get(RESPONSE_STARTTLS_NAME);
         responseBadSyntax = map.get(RESPONSE_BAD_SYNTAX_NAME);
         responseUnknownCommand = map.get(RESPONSE_UNKNOWN_COMMAND_NAME);

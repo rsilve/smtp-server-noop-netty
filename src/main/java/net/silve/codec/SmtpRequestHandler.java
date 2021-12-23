@@ -19,7 +19,6 @@ import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -44,13 +43,9 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(final ChannelHandlerContext ctx) throws Exception {
         messageSession = MessageSession.newInstance();
-
         super.channelActive(ctx);
-        logger.log(Level.FINE, "[{0}] connected", messageSession.getId());
-
         final SmtpResponse response = configuration.responses.responseGreeting;
         ctx.writeAndFlush(response);
-
     }
 
     @Override
@@ -96,13 +91,18 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
         } finally {
             request.recycle();
         }
-
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         super.channelInactive(ctx);
-        messageSession.recycle();
+        if (Objects.nonNull(messageSession)) {
+            messageSession.recycle();
+        }
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        ctx.close();
+    }
 }

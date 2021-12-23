@@ -15,7 +15,6 @@ class DefaultResponse {
     public static final String RESPONSE_EHLO_STARTTLS_NAME = "RESPONSE_EHLO_STARTTLS_NAME";
     public static final String RESPONSE_HELO_NAME = "RESPONSE_HELO_NAME";
     public static final String RESPONSE_STARTTLS_NAME = "RESPONSE_STARTTLS_NAME";
-    public static final String RESPONSE_EMPTY_NAME = "RESPONSE_EMPTY_NAME";
     public static final String RESPONSE_SENDER_ALREADY_SPECIFIED_NAME = "RESPONSE_SENDER_ALREADY_SPECIFIED_NAME";
     public static final String RESPONSE_SENDER_NEEDED_NAME = "RESPONSE_SENDER_NEEDED_NAME";
     public static final String RESPONSE_BAD_SENDER_SYNTAX_NAME = "RESPONSE_BAD_SENDER_SYNTAX_NAME";
@@ -32,7 +31,7 @@ class DefaultResponse {
 
     public static final AsciiString HOSTNAME = AsciiString.of("<hostname>");
 
-    public static final String OK = "2.5.1 Ok";
+    public static final String OK = "2.1.0 Ok";
 
     public static final AsciiString SIZE = AsciiString.of("SIZE 20480000");
     public static final Map<String, SmtpResponse> defaultResponsesMap = Map.ofEntries(
@@ -42,8 +41,7 @@ class DefaultResponse {
             Map.entry(RESPONSE_EHLO_NAME, new DefaultSmtpResponse(250, HOSTNAME, SIZE)),
             Map.entry(RESPONSE_EHLO_STARTTLS_NAME, new DefaultSmtpResponse(250, HOSTNAME, SIZE, AsciiString.of("STARTTLS"))),
             Map.entry(RESPONSE_HELO_NAME, new DefaultSmtpResponse(250, HOSTNAME)),
-            Map.entry(RESPONSE_STARTTLS_NAME, new DefaultSmtpResponse(220, AsciiString.of("Ready to start TLS"))),
-            Map.entry(RESPONSE_EMPTY_NAME, new DefaultSmtpResponse(500, AsciiString.of("SMTP Command required"))),
+            Map.entry(RESPONSE_STARTTLS_NAME, new DefaultSmtpResponse(220, AsciiString.of("2.0.0 Ready to start TLS"))),
             Map.entry(RESPONSE_SENDER_ALREADY_SPECIFIED_NAME, new DefaultSmtpResponse(503, AsciiString.of("5.5.1 Sender already specified"))),
             Map.entry(RESPONSE_SENDER_NEEDED_NAME, new DefaultSmtpResponse(503, AsciiString.of("5.5.1 Error: need MAIL command"))),
             Map.entry(RESPONSE_BAD_SENDER_SYNTAX_NAME, new DefaultSmtpResponse(501, AsciiString.of("5.1.7 Bad sender address syntax"))),

@@ -7,7 +7,7 @@ import net.silve.codec.command.parsers.NoopParser;
 import net.silve.codec.command.parsers.RcptParser;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CommandRegistryTest {
 
@@ -99,13 +99,6 @@ class CommandRegistryTest {
     void shouldContainsEXPN() {
         CommandRegistry command = CommandRegistry.EXPN;
         assertEquals(QUITHandler.singleton(), command.getHandler());
-        assertEquals(NoopParser.singleton(), command.getParser());
-    }
-
-    @Test
-    void shouldContainsEmpty() {
-        CommandRegistry command = CommandRegistry.EMTPY;
-        assertEquals(EmptyHandler.singleton(), command.getHandler());
         assertEquals(NoopParser.singleton(), command.getParser());
     }
 

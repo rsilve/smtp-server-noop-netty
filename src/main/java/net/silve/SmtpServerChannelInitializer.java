@@ -6,6 +6,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import net.silve.codec.SmtpLogHandler;
 import net.silve.codec.SmtpRequestDecoder;
 import net.silve.codec.SmtpRequestHandler;
 import net.silve.codec.SmtpResponseEncoder;
@@ -16,6 +17,7 @@ import java.util.Objects;
 
 class SmtpServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
+    private static final SmtpLogHandler LOG_HANDLER = new SmtpLogHandler();
     private static final ByteBuf CRLF_DELIMITER = Unpooled.wrappedBuffer(new byte[]{13, 10});
     private final SmtpServerConfiguration configuration;
 
@@ -32,6 +34,7 @@ class SmtpServerChannelInitializer extends ChannelInitializer<SocketChannel> {
                 .addLast(new DelimiterBasedFrameDecoder(2000, false, CRLF_DELIMITER))
                 .addLast(new SmtpResponseEncoder())
                 .addLast(new SmtpRequestDecoder(configuration))
-                .addLast(new SmtpRequestHandler(configuration));
+                .addLast(new SmtpRequestHandler(configuration))
+                .addLast(LOG_HANDLER);
     }
 }

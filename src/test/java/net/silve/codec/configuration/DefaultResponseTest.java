@@ -45,13 +45,6 @@ class DefaultResponseTest {
     }
 
     @Test
-    void shouldReturnResponseEmpty() {
-        SmtpResponse response = defaultResponsesMap.get(RESPONSE_EMPTY_NAME);
-        assertEquals(500, response.code());
-        assertEquals(AsciiString.of("SMTP Command required"), response.details().get(0));
-    }
-
-    @Test
     void shouldReturnResponseSenderAlreadySpecified() {
         SmtpResponse response = defaultResponsesMap.get(RESPONSE_SENDER_ALREADY_SPECIFIED_NAME);
         assertEquals(503, response.code());
@@ -83,7 +76,7 @@ class DefaultResponseTest {
     void shouldReturnResponseMailFromOk() {
         SmtpResponse response = defaultResponsesMap.get(RESPONSE_MAIL_FROM_OK_NAME);
         assertEquals(250, response.code());
-        assertEquals(AsciiString.of("2.5.1 Ok"), response.details().get(0));
+        assertEquals(AsciiString.of("2.1.0 Ok"), response.details().get(0));
     }
 
     @Test
@@ -111,7 +104,7 @@ class DefaultResponseTest {
     void shouldReturnResponseRcptOk() {
         SmtpResponse response = defaultResponsesMap.get(RESPONSE_RCPT_OK_NAME);
         assertEquals(250, response.code());
-        assertEquals(AsciiString.of("2.5.1 Ok"), response.details().get(0));
+        assertEquals(AsciiString.of("2.1.0 Ok"), response.details().get(0));
     }
 
     @Test
@@ -132,7 +125,7 @@ class DefaultResponseTest {
     void shouldReturnResponseRsetOk() {
         SmtpResponse response = defaultResponsesMap.get(RESPONSE_RSET_OK_NAME);
         assertEquals(250, response.code());
-        assertEquals(AsciiString.of("2.5.1 Ok"), response.details().get(0));
+        assertEquals(AsciiString.of("2.1.0 Ok"), response.details().get(0));
     }
 
     @Test

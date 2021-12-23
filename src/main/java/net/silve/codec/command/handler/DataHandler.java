@@ -7,6 +7,8 @@ import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
 
+import static net.silve.codec.MessageState.MESSAGE_COMPLETED;
+
 public class DataHandler implements CommandHandler {
 
     private static final DataHandler instance = new DataHandler();
@@ -31,7 +33,7 @@ public class DataHandler implements CommandHandler {
             throw new InvalidProtocolException(configuration.responses.responseRecipientNeeded);
         }
 
-        return HandlerResult.from(configuration.responses.responseEndDataMessage);
+        return new HandlerResult(configuration.responses.responseEndDataMessage, (ChannelHandlerContextAction) ctx -> ctx.fireChannelRead(MESSAGE_COMPLETED));
     }
 
 }

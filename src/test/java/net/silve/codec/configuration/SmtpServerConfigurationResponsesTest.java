@@ -46,13 +46,6 @@ class SmtpServerConfigurationResponsesTest {
     }
 
     @Test
-    void shouldReturnResponseEmpty() {
-        SmtpResponse response = responses.responseEmpty;
-        assertEquals(500, response.code());
-        assertEquals(AsciiString.of("SMTP Command required"), response.details().get(0));
-    }
-
-    @Test
     void shouldReturnResponseSenderAlreadySpecified() {
         SmtpResponse response = responses.responseSenderAlreadySpecified;
         assertEquals(503, response.code());
@@ -84,7 +77,7 @@ class SmtpServerConfigurationResponsesTest {
     void shouldReturnResponseMailFromOk() {
         SmtpResponse response = responses.responseMailFromOk;
         assertEquals(250, response.code());
-        assertEquals(AsciiString.of("2.5.1 Ok"), response.details().get(0));
+        assertEquals(AsciiString.of("2.1.0 Ok"), response.details().get(0));
     }
 
     @Test
@@ -112,7 +105,7 @@ class SmtpServerConfigurationResponsesTest {
     void shouldReturnResponseRcptOk() {
         SmtpResponse response = responses.responseRcptOk;
         assertEquals(250, response.code());
-        assertEquals(AsciiString.of("2.5.1 Ok"), response.details().get(0));
+        assertEquals(AsciiString.of("2.1.0 Ok"), response.details().get(0));
     }
 
     @Test
@@ -133,7 +126,7 @@ class SmtpServerConfigurationResponsesTest {
     void shouldReturnResponseRsetOk() {
         SmtpResponse response = responses.responseRsetOk;
         assertEquals(250, response.code());
-        assertEquals(AsciiString.of("2.5.1 Ok"), response.details().get(0));
+        assertEquals(AsciiString.of("2.1.0 Ok"), response.details().get(0));
     }
 
     @Test

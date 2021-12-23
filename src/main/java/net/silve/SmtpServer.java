@@ -57,7 +57,7 @@ public class SmtpServer implements Callable<Integer> {
 
     public void run() throws InterruptedException, UnknownHostException {
         SmtpServerConfiguration configuration = configure();
-       
+
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -72,7 +72,7 @@ public class SmtpServer implements Callable<Integer> {
 
 
             ChannelFuture f = b.bind(this.port).sync();
-            logger.log(Level.INFO, "Listening to {0}", this.port);
+            logger.log(Level.INFO, "Listening to {0,number,####}", this.port);
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully
             // shut down your server.
