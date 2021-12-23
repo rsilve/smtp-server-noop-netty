@@ -8,6 +8,7 @@ import java.util.Map;
 
 class DefaultResponse {
 
+    public static final String RESPONSE_SERVER_ERROR_NAME = "RESPONSE_SERVER_ERROR_NAME";
     public static final String RESPONSE_UNKNOWN_COMMAND_NAME = "RESPONSE_UNKNOWN_COMMAND_NAME";
     public static final String RESPONSE_BAD_SYNTAX_NAME = "RESPONSE_BAD_SYNTAX_NAME";
     public static final String RESPONSE_GREETING_NAME = "RESPONSE_GREETING_NAME";
@@ -35,6 +36,7 @@ class DefaultResponse {
 
     public static final AsciiString SIZE = AsciiString.of("SIZE 20480000");
     public static final Map<String, SmtpResponse> defaultResponsesMap = Map.ofEntries(
+            Map.entry(RESPONSE_SERVER_ERROR_NAME, new DefaultSmtpResponse(421, AsciiString.of("5.3.0 Internal server error"))),
             Map.entry(RESPONSE_UNKNOWN_COMMAND_NAME, new DefaultSmtpResponse(502, AsciiString.of("5.5.2 Error: command not recognized"))),
             Map.entry(RESPONSE_BAD_SYNTAX_NAME, new DefaultSmtpResponse(500, AsciiString.of("5.5.2 Error: bad syntax"))),
             Map.entry(RESPONSE_GREETING_NAME, new DefaultSmtpResponse(220, AsciiString.of("silve.net ESMTP"))),

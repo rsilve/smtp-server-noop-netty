@@ -134,4 +134,11 @@ class DefaultResponseTest {
         assertEquals(221, response.code());
         assertEquals(AsciiString.of("2.0.0 Bye"), response.details().get(0));
     }
+
+    @Test
+    void shouldReturnResponseServerError() {
+        SmtpResponse response = defaultResponsesMap.get(RESPONSE_SERVER_ERROR_NAME);
+        assertEquals(421, response.code());
+        assertEquals(AsciiString.of("5.3.0 Internal server error"), response.details().get(0));
+    }
 }

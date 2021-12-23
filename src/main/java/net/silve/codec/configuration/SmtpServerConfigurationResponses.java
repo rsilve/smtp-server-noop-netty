@@ -12,6 +12,7 @@ import static net.silve.codec.configuration.DefaultResponse.*;
 
 public class SmtpServerConfigurationResponses {
 
+    public final SmtpResponse responseServerError;
     public final SmtpResponse responseBye;
     public final SmtpResponse responseEndDataMessage;
     public final SmtpResponse responseRecipientNeeded;
@@ -37,6 +38,7 @@ public class SmtpServerConfigurationResponses {
         Objects.requireNonNull(map, "responses map is required");
         Objects.requireNonNull(banner, "banner is required");
         Objects.requireNonNull(hostname, "hostname is required");
+        responseServerError = map.get(RESPONSE_SERVER_ERROR_NAME);
         responseBye = map.get(RESPONSE_BYE_NAME);
         responseEndDataMessage = map.get(RESPONSE_END_DATA_MESSAGE_NAME);
         responseRecipientNeeded = map.get(RESPONSE_RECIPIENT_NEEDED_NAME);
