@@ -82,8 +82,8 @@ class DefaultResponseTest {
     @Test
     void shouldReturnResponseTooManyRecipient() {
         SmtpResponse response = defaultResponsesMap.get(RESPONSE_TOO_MANY_RECIPIENTS_NAME);
-        assertEquals(452, response.code());
-        assertEquals(AsciiString.of("Error: too many recipients"), response.details().get(0));
+        assertEquals(451, response.code());
+        assertEquals(AsciiString.of("5.5.3 Error: too many recipients"), response.details().get(0));
     }
 
     @Test
@@ -111,7 +111,7 @@ class DefaultResponseTest {
     void shouldReturnResponseRecipientNeeded() {
         SmtpResponse response = defaultResponsesMap.get(RESPONSE_RECIPIENT_NEEDED_NAME);
         assertEquals(503, response.code());
-        assertEquals(AsciiString.of("Error: need RCPT command"), response.details().get(0));
+        assertEquals(AsciiString.of("5.5.1 Error: need RCPT command"), response.details().get(0));
     }
 
     @Test

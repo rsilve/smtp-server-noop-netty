@@ -83,8 +83,8 @@ class SmtpServerConfigurationResponsesTest {
     @Test
     void shouldReturnResponseTooManyRecipient() {
         SmtpResponse response = responses.responseTooManyRecipients;
-        assertEquals(452, response.code());
-        assertEquals(AsciiString.of("Error: too many recipients"), response.details().get(0));
+        assertEquals(451, response.code());
+        assertEquals(AsciiString.of("5.5.3 Error: too many recipients"), response.details().get(0));
     }
 
     @Test
@@ -112,7 +112,7 @@ class SmtpServerConfigurationResponsesTest {
     void shouldReturnResponseRecipientNeeded() {
         SmtpResponse response = responses.responseRecipientNeeded;
         assertEquals(503, response.code());
-        assertEquals(AsciiString.of("Error: need RCPT command"), response.details().get(0));
+        assertEquals(AsciiString.of("5.5.1 Error: need RCPT command"), response.details().get(0));
     }
 
     @Test
