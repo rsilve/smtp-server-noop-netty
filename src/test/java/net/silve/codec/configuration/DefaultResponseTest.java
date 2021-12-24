@@ -12,7 +12,7 @@ class DefaultResponseTest {
     @Test
     void shouldReturnResponseUnknowCommand() {
         SmtpResponse response = defaultResponsesMap.get(RESPONSE_UNKNOWN_COMMAND_NAME);
-        assertEquals(502, response.code());
+        assertEquals(500, response.code());
         assertEquals(AsciiString.of("5.5.2 Error: command not recognized"), response.details().get(0));
     }
 

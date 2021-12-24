@@ -38,7 +38,7 @@ class DefaultResponse {
     public static final AsciiString SIZE = AsciiString.of("SIZE 20480000");
     public static final Map<String, SmtpResponse> defaultResponsesMap = Map.ofEntries(
             Map.entry(RESPONSE_SERVER_ERROR_NAME, new DefaultSmtpResponse(421, AsciiString.of("5.3.0 Internal server error"))),
-            Map.entry(RESPONSE_UNKNOWN_COMMAND_NAME, new DefaultSmtpResponse(502, AsciiString.of("5.5.2 Error: command not recognized"))),
+            Map.entry(RESPONSE_UNKNOWN_COMMAND_NAME, new DefaultSmtpResponse(500, AsciiString.of("5.5.2 Error: command not recognized"))),
             Map.entry(RESPONSE_BAD_SYNTAX_NAME, new DefaultSmtpResponse(500, AsciiString.of("5.5.2 Error: bad syntax"))),
             Map.entry(RESPONSE_GREETING_NAME, new DefaultSmtpResponse(220, AsciiString.of("silve.net ESMTP"))),
             Map.entry(RESPONSE_EHLO_NAME, new DefaultSmtpResponse(250, HOSTNAME, SIZE)),
