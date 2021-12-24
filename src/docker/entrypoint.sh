@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-/work/bin/app "$@"
+exec -a "smtp-noop" /work/bin/app "$@"
