@@ -141,6 +141,9 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <platforms>
+                        <platform>unix</platform>
+                    </platforms>
                     <programs>
                         <program>
                             <mainClass>net.silve.Main</mainClass>
