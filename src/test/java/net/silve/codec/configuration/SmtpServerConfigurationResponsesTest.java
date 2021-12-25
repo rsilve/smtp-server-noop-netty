@@ -13,7 +13,7 @@ class SmtpServerConfigurationResponsesTest {
     @Test
     void shouldReturnResponseUnknownCommand() {
         SmtpResponse response = responses.responseUnknownCommand;
-        assertEquals(502, response.code());
+        assertEquals(500, response.code());
         assertEquals(AsciiString.of("5.5.2 Error: command not recognized"), response.details().get(0));
     }
 
