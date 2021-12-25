@@ -123,4 +123,27 @@ class SmtpRequestHandlerTest {
         response = channel.readOutbound();
         assertNull(response);
     }
+
+    @Test
+    void shouldReturnRecipientNeeded() {
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(configuration.responses.responseGreeting, response);
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.MAIL, "rctp@domain.tld")));
+        assertFalse(channel.writeInbound(RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));
+        channel.readOutbound();
+        response = channel.readOutbound();
+        assertEquals(configuration.responses.responseRecipientNeeded, response);
+    }
+
+    @Test
+    void shouldReturnFromNeeded() {
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration));
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(configuration.responses.responseGreeting, response);
+        assertFalse(channel.writeInbound(RecyclableSmtpContent.newInstance(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8)))));
+        response = channel.readOutbound();
+        assertEquals(configuration.responses.responseSenderNeeded, response);
+    }
+
 }
