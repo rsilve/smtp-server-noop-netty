@@ -25,11 +25,12 @@ public class SmtpResponseEncoder extends MessageToMessageEncoder<SmtpResponse> {
         boolean release = true;
         ByteBuf buffer = ctx.alloc().buffer();
         try {
+            byte[] codeBytes = Integer.toString(smtpResponse.code()).getBytes(StandardCharsets.US_ASCII);
             for (int i = 0; i < size; i++) {
                 CharSequence seq = smtpResponse.details().get(i);
                 char separator = i < size - 1 ? SEPARATOR_LAST : SEPARATOR;
                 buffer
-                        .writeBytes(Integer.toString(smtpResponse.code()).getBytes(StandardCharsets.US_ASCII))
+                        .writeBytes(codeBytes)
                         .writeByte(separator)
                         .writeCharSequence(seq, StandardCharsets.US_ASCII);
                 ByteBufUtil.writeShortBE(buffer, 3338);

@@ -11,14 +11,19 @@ public class MessageSessionId {
 
     private static final SecureRandom random = new SecureRandom();
 
+    private static final Hashids hashids;
+
+    static {
+        byte[] bytes = new byte[64];
+        random.nextBytes(new byte[64]);
+        final String salt = Base64.getEncoder().encodeToString(bytes);
+        hashids = new Hashids(salt, 16);
+    }
+
     private MessageSessionId() {
     }
 
     public static AsciiString generate() {
-        byte[] bytes = new byte[64];
-        random.nextBytes(new byte[64]);
-        final String salt = Base64.getEncoder().encodeToString(bytes);
-        final Hashids hashids = new Hashids(salt, 16);
         final String id = hashids.encode(new Date().getTime(), random.nextInt(512));
         return AsciiString.of(id);
     }
