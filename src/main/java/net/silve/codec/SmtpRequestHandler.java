@@ -19,6 +19,9 @@ import net.silve.codec.session.MessageSession;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
+import static net.silve.codec.MessageState.ERROR;
+import static net.silve.codec.MessageState.FATAL_ERROR;
+
 
 /**
  * Handles a server-side channel.
@@ -87,7 +90,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             ctx.writeAndFlush(e.getResponse());
             e.recycle();
         } catch (Exception e) {
-            e.printStackTrace();
+            ctx.fireChannelRead(ERROR);
             ctx.writeAndFlush(configuration.responses.responseUnknownCommand);
         } finally {
             request.recycle();
@@ -104,6 +107,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        ctx.fireChannelRead(FATAL_ERROR);
         ctx.writeAndFlush(configuration.responses.responseServerError).addListener(ChannelFutureListener.CLOSE);
     }
 }

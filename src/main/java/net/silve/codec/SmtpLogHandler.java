@@ -40,6 +40,12 @@ public class SmtpLogHandler extends SimpleChannelInboundHandler<MessageState> {
             case COMMAND_QUIT:
                 logger.log(Level.INFO, "Server close connection");
                 break;
+            case FATAL_ERROR:
+                logger.log(Level.INFO, "Server error. Close connection");
+                break;
+            case ERROR:
+                logger.log(Level.INFO, "Server error");
+                break;
             default:
                 break;
         }
