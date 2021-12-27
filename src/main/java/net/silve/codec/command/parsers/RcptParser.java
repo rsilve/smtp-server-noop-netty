@@ -20,7 +20,7 @@ public class RcptParser extends CommandParser {
         if (line.startsWith(PREFIX)) {
             return Pair.newInstance(AsciiString.EMPTY_STRING, line.subSequence(3));
         } else {
-            throw new InvalidProtocolException(configuration.responses.responseBadRcptSyntax);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseBadRcptSyntax);
         }
     }
 
@@ -28,7 +28,7 @@ public class RcptParser extends CommandParser {
         try {
             return parsePath(path);
         } catch (InvalidSyntaxException e) {
-            throw new InvalidProtocolException(configuration.responses.responseBadRecipientSyntax);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseBadRecipientSyntax);
         }
 
     }

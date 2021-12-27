@@ -34,8 +34,8 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
         super(true);
         Objects.requireNonNull(configuration, "configuration is required");
         this.configuration = configuration;
-        exceptionBadSyntax = new InvalidProtocolException(configuration.responses.responseBadSyntax);
-        exceptionUnknownCommand = new InvalidProtocolException(configuration.responses.responseUnknownCommand);
+        exceptionBadSyntax = InvalidProtocolException.newInstance(configuration.responses.responseBadSyntax);
+        exceptionUnknownCommand = InvalidProtocolException.newInstance(configuration.responses.responseUnknownCommand);
     }
 
     @Override
@@ -69,6 +69,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
             ctx.fireChannelRead(request);
         } catch (InvalidProtocolException e) {
             ctx.writeAndFlush(e.getResponse());
+            e.recycle();
         }
     }
 

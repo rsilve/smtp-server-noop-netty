@@ -26,11 +26,11 @@ public class DataHandler implements CommandHandler {
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) throws InvalidProtocolException {
         if (!session.isTransactionStarted()) {
-            throw new InvalidProtocolException(configuration.responses.responseSenderNeeded);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseSenderNeeded);
         }
 
         if (session.needForward()) {
-            throw new InvalidProtocolException(configuration.responses.responseRecipientNeeded);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseRecipientNeeded);
         }
 
         return new HandlerResult(configuration.responses.responseEndDataMessage, (ChannelHandlerContextAction) ctx -> ctx.fireChannelRead(MESSAGE_COMPLETED));

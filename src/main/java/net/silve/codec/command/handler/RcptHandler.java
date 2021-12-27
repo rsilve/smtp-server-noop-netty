@@ -26,13 +26,13 @@ public class RcptHandler implements CommandHandler {
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) throws InvalidProtocolException {
         if (!session.isTransactionStarted()) {
-            throw new InvalidProtocolException(configuration.responses.responseSenderNeeded);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseSenderNeeded);
         }
         if (session.tooManyForward(50)) {
-            throw new InvalidProtocolException(configuration.responses.responseTooManyRecipients);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseTooManyRecipients);
         }
         if (request.parameters().isEmpty()) {
-            throw new InvalidProtocolException(configuration.responses.responseRecipientNeeded);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseRecipientNeeded);
         }
         session.addForwardPath(AsciiString.of(request.parameters().get(0)));
         return new HandlerResult(configuration.responses.responseRcptOk, (MessageSession session1) -> session1.addForwardPath(AsciiString.of(request.parameters().get(0))));

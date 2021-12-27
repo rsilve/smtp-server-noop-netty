@@ -21,7 +21,7 @@ public class MailParser extends CommandParser {
         if (line.startsWith(PREFIX)) {
             return Pair.newInstance(AsciiString.EMPTY_STRING, line.subSequence(5));
         } else {
-            throw new InvalidProtocolException(configuration.responses.responseBadMailSyntax);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseBadMailSyntax);
         }
     }
 
@@ -29,7 +29,7 @@ public class MailParser extends CommandParser {
         try {
             return parsePath(path);
         } catch (InvalidSyntaxException e) {
-            throw new InvalidProtocolException(configuration.responses.responseBadSenderSyntax);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseBadSenderSyntax);
         }
     }
 

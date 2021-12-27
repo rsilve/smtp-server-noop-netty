@@ -62,6 +62,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             }
         } catch (InvalidProtocolException e) {
             ctx.writeAndFlush(e.getResponse());
+            e.recycle();
         } finally {
             if (msg instanceof RecyclableSmtpContent) {
                 ((RecyclableSmtpContent) msg).recycle();
@@ -82,6 +83,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             }
         } catch (InvalidProtocolException e) {
             ctx.writeAndFlush(e.getResponse());
+            e.recycle();
         } catch (Exception e) {
             ctx.writeAndFlush(configuration.responses.responseUnknownCommand);
         } finally {

@@ -24,16 +24,16 @@ public class MailHandler implements CommandHandler {
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, final MessageSession session, SmtpServerConfiguration configuration) throws InvalidProtocolException {
         if (session.isTransactionStarted()) {
-            throw new InvalidProtocolException(configuration.responses.responseSenderAlreadySpecified);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseSenderAlreadySpecified);
         }
 
         if (request.parameters().isEmpty()) {
-            throw new InvalidProtocolException(configuration.responses.responseSenderNeeded);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseSenderNeeded);
         }
 
         final CharSequence reversePath = request.parameters().get(0);
         if (reversePath.length() == 0) {
-            throw new InvalidProtocolException(configuration.responses.responseBadMailSyntax);
+            throw InvalidProtocolException.newInstance(configuration.responses.responseBadMailSyntax);
         }
         return new HandlerResult(configuration.responses.responseMailFromOk, MessageSession::setReversePath);
 
