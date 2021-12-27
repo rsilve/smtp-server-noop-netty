@@ -1,36 +1,59 @@
 package net.silve.codec.command.handler;
 
 import io.netty.handler.codec.smtp.SmtpResponse;
+import io.netty.util.Recycler;
 
 public class HandlerResult {
 
-
     private static final ChannelHandlerContextAction NOOP = ctx -> { /* do nothing */ };
     private static final MessageSessionAction DEFAULT = session -> { /* do nothing */ };
-    private final SmtpResponse response;
-    private final ChannelHandlerContextAction action;
-    private final MessageSessionAction sessionAction;
+    private static final Recycler<HandlerResult> RECYCLER = new Recycler<>() {
+        protected HandlerResult newObject(Handle<HandlerResult> handle) {
+            return new HandlerResult(handle);
+        }
+    };
+    private final Recycler.Handle<HandlerResult> handle;
+    private SmtpResponse response;
+    private ChannelHandlerContextAction action = NOOP;
+    private MessageSessionAction sessionAction = DEFAULT;
 
-    public HandlerResult(SmtpResponse response) {
-        this(response, NOOP, DEFAULT);
+    private HandlerResult(Recycler.Handle<HandlerResult> handle) {
+        this.handle = handle;
     }
 
-    public HandlerResult(SmtpResponse response, ChannelHandlerContextAction action) {
-        this(response, action, DEFAULT);
+    public static HandlerResult newInstance(SmtpResponse response, ChannelHandlerContextAction action, MessageSessionAction sessionAction) {
+        final HandlerResult obj = RECYCLER.get();
+        obj.response = response;
+        obj.action = action;
+        obj.sessionAction = sessionAction;
+        return obj;
     }
 
-    public HandlerResult(SmtpResponse response, MessageSessionAction sessionAction) {
-        this(response, NOOP, sessionAction);
+    public static HandlerResult newInstance(SmtpResponse response) {
+        final HandlerResult obj = RECYCLER.get();
+        obj.response = response;
+        return obj;
     }
 
-    public HandlerResult(SmtpResponse response, ChannelHandlerContextAction action, MessageSessionAction sessionAction) {
-        this.response = response;
-        this.action = action;
-        this.sessionAction = sessionAction;
+    public static HandlerResult newInstance(SmtpResponse response, ChannelHandlerContextAction action) {
+        final HandlerResult obj = RECYCLER.get();
+        obj.response = response;
+        obj.action = action;
+        return obj;
     }
 
-    public static HandlerResult from(SmtpResponse response) {
-        return new HandlerResult(response);
+    public static HandlerResult newInstance(SmtpResponse response, MessageSessionAction sessionAction) {
+        final HandlerResult obj = RECYCLER.get();
+        obj.response = response;
+        obj.sessionAction = sessionAction;
+        return obj;
+    }
+
+    public void recycle() {
+        this.response = null;
+        this.action = NOOP;
+        this.sessionAction = DEFAULT;
+        handle.recycle(this);
     }
 
     public SmtpResponse getResponse() {
@@ -44,4 +67,6 @@ public class HandlerResult {
     public MessageSessionAction getSessionAction() {
         return sessionAction;
     }
+
+
 }

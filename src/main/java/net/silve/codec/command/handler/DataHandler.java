@@ -33,7 +33,7 @@ public class DataHandler implements CommandHandler {
             throw InvalidProtocolException.newInstance(configuration.responses.responseRecipientNeeded);
         }
 
-        return new HandlerResult(configuration.responses.responseEndDataMessage, (ChannelHandlerContextAction) ctx -> ctx.fireChannelRead(MESSAGE_COMPLETED));
+        return HandlerResult.newInstance(configuration.responses.responseEndDataMessage, (ChannelHandlerContextAction) ctx -> ctx.fireChannelRead(MESSAGE_COMPLETED));
     }
 
 }

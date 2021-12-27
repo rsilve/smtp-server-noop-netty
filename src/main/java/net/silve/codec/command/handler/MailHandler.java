@@ -35,7 +35,7 @@ public class MailHandler implements CommandHandler {
         if (reversePath.length() == 0) {
             throw InvalidProtocolException.newInstance(configuration.responses.responseBadMailSyntax);
         }
-        return new HandlerResult(configuration.responses.responseMailFromOk, MessageSession::setReversePath);
+        return HandlerResult.newInstance(configuration.responses.responseMailFromOk, MessageSession::setReversePath);
 
     }
 }

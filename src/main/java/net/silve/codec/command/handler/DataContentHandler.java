@@ -25,7 +25,7 @@ public class DataContentHandler {
 
         if (content instanceof RecyclableLastSmtpContent) {
             session.completed();
-            return new HandlerResult(
+            return HandlerResult.newInstance(
                     configuration.responses.responseDataOk,
                     MessageSession::completed);
         } else {

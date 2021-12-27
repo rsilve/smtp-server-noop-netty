@@ -24,7 +24,7 @@ public class HELOHandler implements CommandHandler {
     @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
-        return HandlerResult.from(configuration.responses.responseHelo);
+        return HandlerResult.newInstance(configuration.responses.responseHelo);
     }
 }
 

@@ -24,9 +24,9 @@ public class EHLOHandler implements CommandHandler {
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
         if (configuration.getTls().isEnabled()) {
-            return HandlerResult.from(configuration.responses.responseEhloStarttls);
+            return HandlerResult.newInstance(configuration.responses.responseEhloStarttls);
         } else {
-            return HandlerResult.from(configuration.responses.responseEhlo);
+            return HandlerResult.newInstance(configuration.responses.responseEhlo);
         }
     }
 }

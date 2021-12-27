@@ -23,6 +23,6 @@ public class QUITHandler implements CommandHandler {
     @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
-        return HandlerResult.from(configuration.responses.responseBye);
+        return HandlerResult.newInstance(configuration.responses.responseBye);
     }
 }

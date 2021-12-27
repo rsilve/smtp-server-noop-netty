@@ -12,6 +12,13 @@ public class Pair {
             return new Pair(handle);
         }
     };
+    private final Recycler.Handle<Pair> handle;
+    private AsciiString head;
+    private AsciiString tail;
+
+    private Pair(Recycler.Handle<Pair> handle) {
+        this.handle = handle;
+    }
 
     public static Pair newInstance(AsciiString token, AsciiString line) {
         final Pair pair = RECYCLER.get();
@@ -21,19 +28,11 @@ public class Pair {
         return pair;
     }
 
-    private final Recycler.Handle<Pair> handle;
-
-    private Pair(Recycler.Handle<Pair> handle) {
-        this.handle = handle;
-    }
-
     public void recycle() {
+        head = null;
+        tail = null;
         handle.recycle(this);
     }
-
-    private AsciiString head;
-    private AsciiString tail;
-
 
     public AsciiString getHead() {
         return head;

@@ -29,7 +29,7 @@ public class StartTlsHandler implements CommandHandler {
     @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
-        return new HandlerResult(configuration.responses.responseStarttls, (ChannelHandlerContext ctx1) -> {
+        return HandlerResult.newInstance(configuration.responses.responseStarttls, (ChannelHandlerContext ctx1) -> {
             if (configuration.getTls().isEnabled()) {
                 final SSLEngine sslEngine = configuration.getTls().getSslCtx().newEngine(ctx1.channel().alloc());
                 ctx1.pipeline().addFirst(new SslHandler(sslEngine, true));

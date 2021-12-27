@@ -59,6 +59,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             HandlerResult result = contentHandler.handle(msg, messageSession, configuration);
             if (!Objects.isNull(result)) {
                 ctx.writeAndFlush(result.getResponse());
+                result.recycle();
             }
         } catch (InvalidProtocolException e) {
             ctx.writeAndFlush(e.getResponse());
@@ -81,10 +82,12 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             if (result.getResponse().code() == 221 || result.getResponse().code() == 421) {
                 channelFuture.addListener(ChannelFutureListener.CLOSE);
             }
+            result.recycle();
         } catch (InvalidProtocolException e) {
             ctx.writeAndFlush(e.getResponse());
             e.recycle();
         } catch (Exception e) {
+            e.printStackTrace();
             ctx.writeAndFlush(configuration.responses.responseUnknownCommand);
         } finally {
             request.recycle();
