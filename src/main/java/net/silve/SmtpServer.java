@@ -61,6 +61,8 @@ public class SmtpServer implements Callable<Integer> {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
+        Runtime.getRuntime().addShutdownHook(new ShutdownThread(workerGroup, bossGroup));
+
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
@@ -92,5 +94,22 @@ public class SmtpServer implements Callable<Integer> {
                 .setTlsCert(tlsCert)
                 .setTlsKey(tlsKey);
         return new SmtpServerConfiguration(builder);
+    }
+
+    private static class ShutdownThread extends Thread {
+        private final EventLoopGroup workerGroup;
+        private final EventLoopGroup bossGroup;
+
+        public ShutdownThread(EventLoopGroup workerGroup, EventLoopGroup bossGroup) {
+            this.workerGroup = workerGroup;
+            this.bossGroup = bossGroup;
+        }
+
+        @Override
+        public void run() {
+            workerGroup.shutdownGracefully();
+            bossGroup.shutdownGracefully();
+            logger.log(Level.INFO, "termination signal receive: stop process");
+        }
     }
 }
