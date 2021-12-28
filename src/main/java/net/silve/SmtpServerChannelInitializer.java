@@ -19,6 +19,7 @@ class SmtpServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     private static final SmtpLogHandler LOG_HANDLER = new SmtpLogHandler();
     private static final ByteBuf CRLF_DELIMITER = Unpooled.wrappedBuffer(new byte[]{13, 10});
+    private static final SmtpResponseEncoder RESPONSE_ENCODER = new SmtpResponseEncoder();
     private final SmtpServerConfiguration configuration;
 
     public SmtpServerChannelInitializer(@Nonnull SmtpServerConfiguration configuration) {
@@ -32,7 +33,7 @@ class SmtpServerChannelInitializer extends ChannelInitializer<SocketChannel> {
                 //.addLast(new ReadTimeoutHandler(1, TimeUnit.SECONDS))
                 //.addLast(new WriteTimeoutHandler(10, TimeUnit.SECONDS))
                 .addLast(new DelimiterBasedFrameDecoder(2000, false, CRLF_DELIMITER))
-                .addLast(new SmtpResponseEncoder())
+                .addLast(RESPONSE_ENCODER)
                 .addLast(new SmtpRequestDecoder(configuration))
                 .addLast(new SmtpRequestHandler(configuration))
                 .addLast(LOG_HANDLER);
