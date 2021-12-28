@@ -45,6 +45,10 @@ public class SmtpServer implements Callable<Integer> {
             description = "set hostname")
     String hostname;
 
+    @CommandLine.Option(names = {"--thread"}, paramLabel = "thread",
+            description = "fix number of thread (0 for automatic setting)")
+    int thread = 0;
+
     @Override
     public Integer call() throws Exception {
         run();
@@ -55,7 +59,7 @@ public class SmtpServer implements Callable<Integer> {
         SmtpServerConfiguration configuration = configure();
 
         EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup(thread);
 
         Runtime.getRuntime().addShutdownHook(new ShutdownThread(workerGroup, bossGroup));
 
