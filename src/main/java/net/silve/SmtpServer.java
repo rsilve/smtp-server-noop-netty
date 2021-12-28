@@ -9,21 +9,17 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import net.silve.codec.configuration.SmtpServerConfiguration;
 import net.silve.codec.configuration.SmtpServerConfigurationBuilder;
-import net.silve.codec.logger.LoggerFactory;
+import net.silve.codec.logger.SmtpLogger;
 import picocli.CommandLine;
 
 import javax.annotation.Nonnull;
 import java.net.UnknownHostException;
 import java.util.concurrent.Callable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 @CommandLine.Command(name = "smtp-noop", mixinStandardHelpOptions = true,
         description = "black hole email server")
 public class SmtpServer implements Callable<Integer> {
-
-    private static final Logger logger = LoggerFactory.getInstance();
-
 
     @CommandLine.Option(names = {"-p", "--port"}, paramLabel = "port",
             description = "listening port (default: ${DEFAULT-VALUE})")
@@ -74,7 +70,7 @@ public class SmtpServer implements Callable<Integer> {
 
 
             ChannelFuture f = b.bind(this.port).sync();
-            logger.log(Level.INFO, "Listening to {0,number,####}", this.port);
+            SmtpLogger.info("Listening to {}", this.port);
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully
             // shut down your server.
@@ -109,7 +105,7 @@ public class SmtpServer implements Callable<Integer> {
         public void run() {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
-            logger.log(Level.INFO, "termination signal receive: stop process");
+            SmtpLogger.info("termination signal receive: stop process");
         }
     }
 }
