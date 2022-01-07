@@ -4,6 +4,7 @@ import io.netty.handler.codec.smtp.SmtpResponse;
 import io.netty.util.AsciiString;
 import org.junit.jupiter.api.Test;
 
+import static net.silve.codec.configuration.DefaultResponse.SIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SmtpServerConfigurationResponsesTest {
@@ -36,6 +37,8 @@ class SmtpServerConfigurationResponsesTest {
         SmtpResponse response = responses.responseEhlo;
         assertEquals(250, response.code());
         assertEquals(AsciiString.of("hostname"), response.details().get(0));
+        assertEquals(AsciiString.of("PIPELINING"), response.details().get(1));
+        assertEquals(SIZE, response.details().get(2));
     }
 
     @Test
