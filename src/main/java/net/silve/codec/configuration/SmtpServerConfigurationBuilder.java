@@ -19,7 +19,7 @@ public class SmtpServerConfigurationBuilder {
     private boolean tls;
     private String tlsCert;
     private String tlsKey;
-    private int recipientMaxSize;
+    private int recipientMaxSize = 50;
 
     public SmtpServerConfigurationBuilder() {
         /* empty */
