@@ -34,7 +34,6 @@ public class RcptHandler implements CommandHandler {
         if (request.parameters().isEmpty()) {
             throw InvalidProtocolException.newInstance(configuration.responses.responseRecipientNeeded);
         }
-        session.addForwardPath(AsciiString.of(request.parameters().get(0)));
         return HandlerResult.newInstance(configuration.responses.responseRcptOk, (MessageSession session1) -> session1.addForwardPath(AsciiString.of(request.parameters().get(0))));
     }
 

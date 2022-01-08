@@ -10,8 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RcptHandlerTest {
 
@@ -45,6 +44,7 @@ class RcptHandlerTest {
         }
     }
 
+
     @Test
     void shouldThrowExceptionIfNoRecipient() {
         try {
@@ -59,6 +59,16 @@ class RcptHandlerTest {
     void shouldReturnResponse() throws InvalidProtocolException {
         HandlerResult handle = RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "recipient"), MessageSession.newInstance().setReversePath(), configuration);
         assertEquals(configuration.responses.responseRcptOk, handle.getResponse());
+    }
+
+    @Test
+    void shouldReturnResponseMultipleRecipient() throws InvalidProtocolException {
+        MessageSession session = MessageSession.newInstance().setReversePath();
+        IntStream.range(0, 50).forEach(value -> session.addForwardPath(AsciiString.of(String.valueOf(value))));
+        HandlerResult handle = RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "recipient"), session, configuration);
+        assertEquals(configuration.responses.responseRcptOk, handle.getResponse());
+        handle.getSessionAction().execute(session);
+        assertTrue(session.tooManyForward(50));
     }
 
 
