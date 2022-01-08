@@ -60,8 +60,8 @@ public class SmtpServerConfigurationResponses {
 
         responseGreeting = new DefaultSmtpResponse(220, AsciiString.of(banner));
         responseHelo = new DefaultSmtpResponse(250, AsciiString.of(hostname));
-        responseEhloStarttls = new DefaultSmtpResponse(250, AsciiString.of(hostname), SIZE, AsciiString.of("STARTTLS"));
-        responseEhlo = new DefaultSmtpResponse(250, AsciiString.of(hostname), AsciiString.of("PIPELINING"), SIZE);
+        responseEhloStarttls = new DefaultSmtpResponse(250, AsciiString.of(hostname), SIZE, AsciiString.of("STARTTLS"), AsciiString.of("PIPELINING"));
+        responseEhlo = new DefaultSmtpResponse(250, AsciiString.of(hostname), SIZE, AsciiString.of("PIPELINING"));
     }
 
 

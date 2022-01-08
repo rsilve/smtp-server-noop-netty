@@ -37,8 +37,18 @@ class SmtpServerConfigurationResponsesTest {
         SmtpResponse response = responses.responseEhlo;
         assertEquals(250, response.code());
         assertEquals(AsciiString.of("hostname"), response.details().get(0));
-        assertEquals(AsciiString.of("PIPELINING"), response.details().get(1));
-        assertEquals(SIZE, response.details().get(2));
+        assertEquals(SIZE, response.details().get(1));
+        assertEquals(AsciiString.of("PIPELINING"), response.details().get(2));
+    }
+
+    @Test
+    void shouldReturnResponseEHLOStartTls() {
+        SmtpResponse response = responses.responseEhloStarttls;
+        assertEquals(250, response.code());
+        assertEquals(AsciiString.of("hostname"), response.details().get(0));
+        assertEquals(SIZE, response.details().get(1));
+        assertEquals(AsciiString.of("STARTTLS"), response.details().get(2));
+        assertEquals(AsciiString.of("PIPELINING"), response.details().get(3));
     }
 
     @Test
