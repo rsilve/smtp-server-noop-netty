@@ -93,7 +93,8 @@ public class SmtpServerConfigurationBuilder {
         return recipientMaxSize;
     }
 
-    public void setRecipientMaxSize(int maxSize) {
+    public SmtpServerConfigurationBuilder setRecipientMaxSize(int maxSize) {
         this.recipientMaxSize = maxSize;
+        return this;
     }
 }

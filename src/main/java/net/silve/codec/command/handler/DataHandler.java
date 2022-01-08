@@ -33,6 +33,10 @@ public class DataHandler implements CommandHandler {
             throw InvalidProtocolException.newInstance(configuration.responses.responseRecipientNeeded);
         }
 
+        if (session.tooManyForward(configuration.maxRecipientSize)) {
+            throw InvalidProtocolException.newInstance(configuration.responses.responseTooManyRecipients);
+        }
+
         return HandlerResult.newInstance(configuration.responses.responseEndDataMessage, (ChannelHandlerContextAction) ctx -> ctx.fireChannelRead(MESSAGE_COMPLETED));
     }
 

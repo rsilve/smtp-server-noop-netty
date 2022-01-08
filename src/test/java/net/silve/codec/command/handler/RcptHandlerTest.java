@@ -64,7 +64,7 @@ class RcptHandlerTest {
     @Test
     void shouldReturnResponseMultipleRecipient() throws InvalidProtocolException {
         MessageSession session = MessageSession.newInstance().setReversePath();
-        IntStream.range(0, 50).forEach(value -> session.addForwardPath(AsciiString.of(String.valueOf(value))));
+        IntStream.range(0, 49).forEach(value -> session.addForwardPath(AsciiString.of(String.valueOf(value))));
         HandlerResult handle = RcptHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.RCPT, "recipient"), session, configuration);
         assertEquals(configuration.responses.responseRcptOk, handle.getResponse());
         handle.getSessionAction().execute(session);

@@ -49,6 +49,10 @@ public class SmtpServer implements Callable<Integer> {
             description = "fix number of thread (0 for automatic setting)")
     int thread = 0;
 
+    @CommandLine.Option(names = {"--max-recipients"}, paramLabel = "max-recipient",
+            description = "fix the max number of recipients (default: ${DEFAULT-VALUE})")
+    int maxRecipients = 50;
+
     @Override
     public Integer call() throws Exception {
         run();
@@ -92,7 +96,8 @@ public class SmtpServer implements Callable<Integer> {
                 .setHostname(hostname)
                 .setTls(tls)
                 .setTlsCert(tlsCert)
-                .setTlsKey(tlsKey);
+                .setTlsKey(tlsKey)
+                .setRecipientMaxSize(maxRecipients);
         return new SmtpServerConfiguration(builder);
     }
 

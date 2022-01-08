@@ -64,7 +64,7 @@ public class MessageSession {
     }
 
     public boolean tooManyForward(int limit) {
-        return Objects.nonNull(forwardPath) && forwardPath.size() > limit;
+        return Objects.nonNull(forwardPath) && forwardPath.size() >= limit;
     }
 
     public boolean isTransactionStarted() {
