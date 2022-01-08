@@ -19,6 +19,7 @@ public class SmtpServerConfigurationBuilder {
     private boolean tls;
     private String tlsCert;
     private String tlsKey;
+    private int recipientMaxSize;
 
     public SmtpServerConfigurationBuilder() {
         /* empty */
@@ -86,5 +87,13 @@ public class SmtpServerConfigurationBuilder {
     public SmtpServerConfigurationBuilder setTlsKey(String tlsKey) {
         this.tlsKey = tlsKey;
         return this;
+    }
+
+    public int getRecipientMaxSize() {
+        return recipientMaxSize;
+    }
+
+    public void setRecipientMaxSize(int maxSize) {
+        this.recipientMaxSize = maxSize;
     }
 }
