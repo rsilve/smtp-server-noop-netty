@@ -14,6 +14,7 @@ import net.silve.codec.configuration.SmtpServerConfiguration;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 class SmtpServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -29,13 +30,14 @@ class SmtpServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
     @Override
     public void initChannel(SocketChannel ch) {
+        AtomicBoolean contentExpected = new AtomicBoolean(false);
         ch.pipeline()
                 //.addLast(new ReadTimeoutHandler(1, TimeUnit.SECONDS))
                 //.addLast(new WriteTimeoutHandler(10, TimeUnit.SECONDS))
                 .addLast(new DelimiterBasedFrameDecoder(2000, false, CRLF_DELIMITER))
                 .addLast(RESPONSE_ENCODER)
-                .addLast(new SmtpRequestDecoder(configuration))
-                .addLast(new SmtpRequestHandler(configuration))
+                .addLast(new SmtpRequestDecoder(configuration, contentExpected))
+                .addLast(new SmtpRequestHandler(configuration, contentExpected))
                 .addLast(LOG_HANDLER);
     }
 }

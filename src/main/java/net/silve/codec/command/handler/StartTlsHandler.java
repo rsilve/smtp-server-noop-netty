@@ -11,6 +11,7 @@ import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
 import javax.net.ssl.SSLEngine;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class StartTlsHandler implements CommandHandler {
 
@@ -29,7 +30,7 @@ public class StartTlsHandler implements CommandHandler {
     @Nonnull
     @Override
     public HandlerResult handle(RecyclableSmtpRequest request, MessageSession session, SmtpServerConfiguration configuration) {
-        return HandlerResult.newInstance(configuration.responses.responseStarttls, (ChannelHandlerContext ctx1) -> {
+        return HandlerResult.newInstance(configuration.responses.responseStarttls, (ChannelHandlerContext ctx1, AtomicBoolean contentExpected) -> {
             if (configuration.getTls().isEnabled()) {
                 final SSLEngine sslEngine = configuration.getTls().getSslCtx().newEngine(ctx1.channel().alloc());
                 ctx1.pipeline().addFirst(new SslHandler(sslEngine, true));

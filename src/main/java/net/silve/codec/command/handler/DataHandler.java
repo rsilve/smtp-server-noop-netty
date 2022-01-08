@@ -37,7 +37,10 @@ public class DataHandler implements CommandHandler {
             throw InvalidProtocolException.newInstance(configuration.responses.responseTooManyRecipients);
         }
 
-        return HandlerResult.newInstance(configuration.responses.responseEndDataMessage, (ChannelHandlerContextAction) ctx -> ctx.fireChannelRead(MESSAGE_COMPLETED));
+        return HandlerResult.newInstance(configuration.responses.responseEndDataMessage, (ctx, contentExpected) -> {
+            ctx.fireChannelRead(MESSAGE_COMPLETED);
+            contentExpected.set(true);
+        });
     }
 
 }

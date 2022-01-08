@@ -18,6 +18,7 @@ import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.silve.codec.MessageState.ERROR;
 import static net.silve.codec.MessageState.FATAL_ERROR;
@@ -30,13 +31,16 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     private static final CommandMap commandMap = new CommandMap();
     private final SmtpServerConfiguration configuration;
+    private final AtomicBoolean contentExpected;
 
     private MessageSession messageSession;
 
-    public SmtpRequestHandler(@Nonnull SmtpServerConfiguration configuration) {
+    public SmtpRequestHandler(@Nonnull SmtpServerConfiguration configuration, @Nonnull AtomicBoolean contentExpected) {
         super();
         Objects.requireNonNull(configuration, "server configuration is required");
         this.configuration = configuration;
+        Objects.requireNonNull(configuration, "content expected shared properties required");
+        this.contentExpected = contentExpected;
     }
 
     @Override
@@ -80,7 +84,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             final CommandHandler commandHandler = commandMap.getHandler(command.name());
             HandlerResult result = commandHandler.response(request, messageSession, configuration);
             result.getSessionAction().execute(messageSession);
-            result.getAction().execute(ctx);
+            result.getAction().execute(ctx, contentExpected);
             final ChannelFuture channelFuture = ctx.writeAndFlush(result.getResponse());
             if (result.getResponse().code() == 221 || result.getResponse().code() == 421) {
                 channelFuture.addListener(ChannelFutureListener.CLOSE);
@@ -108,6 +112,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         ctx.fireChannelRead(FATAL_ERROR);
+        cause.printStackTrace();
         ctx.writeAndFlush(configuration.responses.responseServerError).addListener(ChannelFutureListener.CLOSE);
     }
 }
