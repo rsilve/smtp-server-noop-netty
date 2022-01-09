@@ -12,6 +12,7 @@ import net.silve.codec.command.handler.DataContentHandler;
 import net.silve.codec.command.handler.HandlerResult;
 import net.silve.codec.command.handler.InvalidProtocolException;
 import net.silve.codec.configuration.SmtpServerConfiguration;
+import net.silve.codec.logger.SmtpLogger;
 import net.silve.codec.request.RecyclableSmtpContent;
 import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
@@ -19,9 +20,6 @@ import net.silve.codec.session.MessageSession;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import static net.silve.codec.MessageState.ERROR;
-import static net.silve.codec.MessageState.FATAL_ERROR;
 
 
 /**
@@ -86,15 +84,19 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             result.getSessionAction().execute(messageSession);
             result.getAction().execute(ctx, contentExpected);
             final ChannelFuture channelFuture = ctx.writeAndFlush(result.getResponse());
+            if (request.command().equals(SmtpCommand.RSET) || request.command().equals(SmtpCommand.QUIT)) {
+                SmtpLogger.info(messageSession);
+            }
             if (result.getResponse().code() == 221 || result.getResponse().code() == 421) {
                 channelFuture.addListener(ChannelFutureListener.CLOSE);
             }
             result.recycle();
         } catch (InvalidProtocolException e) {
+            messageSession.lastError(e.getResponse().details());
             ctx.writeAndFlush(e.getResponse());
             e.recycle();
         } catch (Exception e) {
-            ctx.fireChannelRead(ERROR);
+            messageSession.lastError(e.getMessage());
             ctx.writeAndFlush(configuration.responses.responseUnknownCommand);
         } finally {
             request.recycle();
@@ -111,8 +113,7 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        ctx.fireChannelRead(FATAL_ERROR);
-        cause.printStackTrace();
+        SmtpLogger.error(cause);
         ctx.writeAndFlush(configuration.responses.responseServerError).addListener(ChannelFutureListener.CLOSE);
     }
 }
