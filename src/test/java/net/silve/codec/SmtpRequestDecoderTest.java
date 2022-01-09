@@ -14,16 +14,18 @@ import net.silve.codec.request.RecyclableSmtpRequest;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class SmtpRequestDecoderTest {
 
+    private final AtomicBoolean contentExpected = new AtomicBoolean(false);
     SmtpServerConfiguration configuration = new SmtpServerConfiguration(new SmtpServerConfigurationBuilder());
 
     @Test
     void shouldDecodeRequest() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration, contentExpected));
         ByteBuf buf = Unpooled.copiedBuffer("MAIL FROM:<name@domain.tld>\r\n".getBytes(StandardCharsets.UTF_8));
         assertTrue(channel.writeInbound(buf));
         assertTrue(channel.finish());
@@ -34,34 +36,28 @@ class SmtpRequestDecoderTest {
 
     @Test
     void shouldDecodeContent() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
-        assertTrue(channel.writeInbound(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8))));
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration, new AtomicBoolean(true)));
         assertTrue(channel.writeInbound(Unpooled.copiedBuffer("test".getBytes(StandardCharsets.UTF_8))));
         assertTrue(channel.finish());
-        RecyclableSmtpRequest req = channel.readInbound();
-        assertEquals(SmtpCommand.DATA, req.command());
         RecyclableSmtpContent content = channel.readInbound();
         assertEquals("test", content.content().toString(StandardCharsets.UTF_8));
     }
 
     @Test
     void shouldDecodeLastContent() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
-        assertTrue(channel.writeInbound(Unpooled.copiedBuffer("DATA\r\n".getBytes(StandardCharsets.UTF_8))));
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration, new AtomicBoolean(true)));
         assertTrue(channel.writeInbound(Unpooled.wrappedBuffer(new byte[]{46, 13, 10})));
         assertTrue(channel.writeInbound(Unpooled.copiedBuffer("QUIT\r\n".getBytes(StandardCharsets.UTF_8))));
         assertTrue(channel.finish());
-        RecyclableSmtpRequest req = channel.readInbound();
-        assertEquals(SmtpCommand.DATA, req.command());
         RecyclableLastSmtpContent content = channel.readInbound();
         assertArrayEquals(new byte[]{46, 13, 10}, content.content().array());
-        req = channel.readInbound();
+        RecyclableSmtpRequest req = channel.readInbound();
         assertEquals(SmtpCommand.QUIT, req.command());
     }
 
     @Test
     void shouldThrowExceptionIfTooShort() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration, contentExpected));
         ByteBuf buf = Unpooled.copiedBuffer("MAI\r\n".getBytes(StandardCharsets.UTF_8));
         assertFalse(channel.writeInbound(buf));
         assertTrue(channel.finish());
@@ -71,7 +67,7 @@ class SmtpRequestDecoderTest {
 
     @Test
     void shouldReturnResponseIfInvalid() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration, contentExpected));
         ByteBuf buf = Unpooled.copiedBuffer("MAIL FRO:<name@domain.tld>\r\n".getBytes(StandardCharsets.UTF_8));
         assertFalse(channel.writeInbound(buf));
         assertTrue(channel.finish());
@@ -81,7 +77,7 @@ class SmtpRequestDecoderTest {
 
     @Test
     void shouldDecodeUnknownCommand() {
-        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration));
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestDecoder(configuration, contentExpected));
         ByteBuf buf = Unpooled.copiedBuffer("TITI FROM:<name@domain.tld>\r\n".getBytes(StandardCharsets.UTF_8));
         assertTrue(channel.writeInbound(buf));
         assertTrue(channel.finish());

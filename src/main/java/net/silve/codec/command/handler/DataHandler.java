@@ -7,8 +7,6 @@ import net.silve.codec.session.MessageSession;
 
 import javax.annotation.Nonnull;
 
-import static net.silve.codec.MessageState.MESSAGE_COMPLETED;
-
 public class DataHandler implements CommandHandler {
 
     private static final DataHandler instance = new DataHandler();
@@ -33,7 +31,14 @@ public class DataHandler implements CommandHandler {
             throw InvalidProtocolException.newInstance(configuration.responses.responseRecipientNeeded);
         }
 
-        return HandlerResult.newInstance(configuration.responses.responseEndDataMessage, (ChannelHandlerContextAction) ctx -> ctx.fireChannelRead(MESSAGE_COMPLETED));
+        if (session.tooManyForward(configuration.maxRecipientSize)) {
+            throw InvalidProtocolException.newInstance(configuration.responses.responseTooManyRecipients);
+        }
+
+        return HandlerResult.newInstance(configuration.responses.responseEndDataMessage, (ctx, contentExpected) -> {
+            session.setAccepted(true);
+            contentExpected.set(true);
+        });
     }
 
 }

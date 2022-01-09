@@ -20,6 +20,8 @@ public class MessageSession {
     private boolean transactionStarted = false;
     private long startedAt = System.nanoTime();
     private long completedAt = 0L;
+    private boolean accepted = false;
+    private List<CharSequence> details;
 
     private MessageSession(Recycler.Handle<MessageSession> handle) {
         this.handle = handle;
@@ -43,6 +45,8 @@ public class MessageSession {
         transactionStarted = false;
         startedAt = 0;
         completedAt = 0L;
+        accepted = false;
+        details = null;
     }
 
     public AsciiString getId() {
@@ -64,7 +68,7 @@ public class MessageSession {
     }
 
     public boolean tooManyForward(int limit) {
-        return Objects.nonNull(forwardPath) && forwardPath.size() > limit;
+        return Objects.nonNull(forwardPath) && forwardPath.size() >= limit;
     }
 
     public boolean isTransactionStarted() {
@@ -79,5 +83,29 @@ public class MessageSession {
     public long duration() {
         return this.completedAt - this.startedAt;
     }
+
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public MessageSession setAccepted(boolean accepted) {
+        this.accepted = accepted;
+        return this;
+    }
+
+    public void lastError(List<CharSequence> details) {
+        this.details = details;
+    }
+
+    public void lastError(CharSequence details) {
+        ArrayList<CharSequence> list = new ArrayList<>();
+        list.add(details);
+        this.details = list;
+    }
+
+    public String lastError() {
+        return String.join(", ", details);
+    }
+
 
 }

@@ -10,6 +10,8 @@ import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static net.silve.codec.command.handler.StartTlsHandler.STARTTLS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -32,7 +34,7 @@ class StartTlsHandlerTest {
         ChannelPipeline pipeline = mock(ChannelPipeline.class);
         ChannelHandlerContext mock = mock(ChannelHandlerContext.class);
         when(mock.pipeline()).thenReturn(pipeline);
-        handle.getAction().execute(mock);
+        handle.getAction().execute(mock, new AtomicBoolean(false));
         verifyNoInteractions(pipeline);
     }
 
@@ -56,7 +58,7 @@ class StartTlsHandlerTest {
         when(mock.pipeline()).thenReturn(pipeline);
         when(channel.alloc()).thenReturn(alloc);
         when(mock.channel()).thenReturn(channel);
-        handle.getAction().execute(mock);
+        handle.getAction().execute(mock, new AtomicBoolean(false));
         verify(pipeline).addFirst(any());
     }
 

@@ -5,7 +5,7 @@ import io.netty.util.Recycler;
 
 public class HandlerResult {
 
-    private static final ChannelHandlerContextAction NOOP = ctx -> { /* do nothing */ };
+    private static final ChannelHandlerContextAction NOOP = (ctx, contentExpected) -> { /* do nothing */ };
     private static final MessageSessionAction DEFAULT = session -> { /* do nothing */ };
     private static final Recycler<HandlerResult> RECYCLER = new Recycler<>() {
         protected HandlerResult newObject(Handle<HandlerResult> handle) {

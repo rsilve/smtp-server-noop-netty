@@ -17,6 +17,7 @@ import net.silve.codec.request.RecyclableSmtpRequest;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
@@ -26,21 +27,23 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     private static final CommandMap commandMap = new CommandMap();
     private final SmtpServerConfiguration configuration;
 
-    private boolean contentExpected = false;
+    private final AtomicBoolean contentExpected;
 
-    public SmtpRequestDecoder(@Nonnull SmtpServerConfiguration configuration) {
+    public SmtpRequestDecoder(@Nonnull SmtpServerConfiguration configuration, AtomicBoolean contentExpected) {
         super(true);
         Objects.requireNonNull(configuration, "configuration is required");
         this.configuration = configuration;
+        Objects.requireNonNull(configuration, "content expected shared properties required");
+        this.contentExpected = contentExpected;
+
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf frame) {
-
-        if (!this.contentExpected) {
-            readRequest(ctx, frame);
-        } else {
+        if (this.contentExpected.get()) {
             readContent(ctx, frame);
+        } else {
+            readRequest(ctx, frame);
         }
 
     }
@@ -48,7 +51,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     private void readContent(ChannelHandlerContext ctx, ByteBuf frame) {
         RecyclableSmtpContent result;
         if (frame.equals(DOT_CRLF_DELIMITER)) {
-            this.contentExpected = false;
+            this.contentExpected.set(false);
             result = RecyclableLastSmtpContent.newInstance(frame.retain());
         } else {
             result = RecyclableSmtpContent.newInstance(frame.retain());
@@ -59,9 +62,6 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     private void readRequest(ChannelHandlerContext ctx, ByteBuf frame) {
         try {
             RecyclableSmtpRequest request = parseLine(frame);
-            if (SmtpCommand.DATA.equals(request.command())) {
-                this.contentExpected = true;
-            }
             ctx.fireChannelRead(request);
         } catch (InvalidProtocolException e) {
             ctx.writeAndFlush(e.getResponse());

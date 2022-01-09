@@ -20,6 +20,14 @@ class SmtpServerConfigurationBuilderTest {
         assertEquals(InetAddress.getLocalHost().getHostName(), builder.getHostname());
         builder.setHostname(" ");
         assertEquals(InetAddress.getLocalHost().getHostName(), builder.getHostname());
+        builder.setRecipientMaxSize(30);
+        assertEquals(30, builder.getRecipientMaxSize());
     }
 
+    @Test
+    void shouldHaveDefaultMaxRecipientSize() {
+        SmtpServerConfigurationBuilder builder = new SmtpServerConfigurationBuilder();
+        assertEquals(50, builder.getRecipientMaxSize());
+
+    }
 }

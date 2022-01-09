@@ -26,10 +26,10 @@ class MessageSessionTest {
         assertTrue(session.needForward());
         session.addForwardPath(AsciiString.of("eee"));
         assertFalse(session.needForward());
-        assertFalse(session.tooManyForward(1));
+        assertFalse(session.tooManyForward(2));
         session.addForwardPath(AsciiString.of("eee"));
         assertFalse(session.needForward());
-        assertTrue(session.tooManyForward(1));
+        assertTrue(session.tooManyForward(2));
     }
 
     @Test
@@ -52,6 +52,6 @@ class MessageSessionTest {
         assertTrue(session.needForward());
         assertFalse(session.duration() > 0);
     }
-    
+
 
 }
