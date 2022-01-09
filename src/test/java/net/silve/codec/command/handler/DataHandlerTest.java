@@ -1,5 +1,6 @@
 package net.silve.codec.command.handler;
 
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.util.AsciiString;
 import net.silve.codec.configuration.SmtpServerConfiguration;
@@ -8,9 +9,11 @@ import net.silve.codec.request.RecyclableSmtpRequest;
 import net.silve.codec.session.MessageSession;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class DataHandlerTest {
 
@@ -23,7 +26,22 @@ class DataHandlerTest {
     }
 
     @Test
-    void shouldReturnResponse() {
+    void shouldReturnResponse() throws InvalidProtocolException {
+        MessageSession session = MessageSession.newInstance().setReversePath().addForwardPath(AsciiString.of("ee"));
+        HandlerResult result = DataHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA),
+                session, configuration);
+        assertNotNull(result);
+        assertEquals(configuration.responses.responseEndDataMessage, result.getResponse());
+        ChannelHandlerContext mock = mock(ChannelHandlerContext.class);
+        AtomicBoolean contentExpected = new AtomicBoolean(false);
+        result.getAction().execute(mock, contentExpected);
+        assertTrue(contentExpected.get());
+        assertTrue(session.isAccepted());
+    }
+
+
+    @Test
+    void shouldThrowExceptionIfSenderNeeded() {
         try {
             DataHandler.singleton().handle(RecyclableSmtpRequest.newInstance(SmtpCommand.DATA), MessageSession.newInstance(), configuration);
             fail();
