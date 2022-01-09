@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
 
-    private static final CommandMap commandMap = new CommandMap();
+    private static final CommandMap commandMap = CommandMap.getInstance();
     private final SmtpServerConfiguration configuration;
     private final AtomicBoolean contentExpected;
 

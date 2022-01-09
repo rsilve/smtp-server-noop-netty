@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class CommandMap {
 
+    private static final CommandMap instance = new CommandMap();
     private final Map<CharSequence, CommandHandler> handlerMap = new HashMap<>();
     private final Map<CharSequence, CommandParser> parserMap = new HashMap<>();
-
-    public CommandMap() {
+    private CommandMap() {
         for (CommandRegistry registry : CommandRegistry.values()) {
             final CommandHandler handler = registry.getHandler();
             this.handlerMap.put(handler.getName(), handler);
@@ -21,6 +21,10 @@ public class CommandMap {
             }
 
         }
+    }
+
+    public static CommandMap getInstance() {
+        return instance;
     }
 
     public CommandHandler getHandler(CharSequence name) {

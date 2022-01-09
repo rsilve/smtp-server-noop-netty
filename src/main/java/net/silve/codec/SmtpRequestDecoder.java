@@ -24,7 +24,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
     private static final ByteBuf DOT_CRLF_DELIMITER = Unpooled.wrappedBuffer(new byte[]{46, 13, 10});
     private static final CharSequence[] EMPTY_CHAR_SEQUENCE = {};
-    private static final CommandMap commandMap = new CommandMap();
+    private static final CommandMap commandMap = CommandMap.getInstance();
     private final SmtpServerConfiguration configuration;
 
     private final AtomicBoolean contentExpected;
