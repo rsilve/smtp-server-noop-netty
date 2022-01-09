@@ -20,15 +20,7 @@ public class HandlerResult {
     private HandlerResult(Recycler.Handle<HandlerResult> handle) {
         this.handle = handle;
     }
-
-    public static HandlerResult newInstance(SmtpResponse response, ChannelHandlerContextAction action, MessageSessionAction sessionAction) {
-        final HandlerResult obj = RECYCLER.get();
-        obj.response = response;
-        obj.action = action;
-        obj.sessionAction = sessionAction;
-        return obj;
-    }
-
+    
     public static HandlerResult newInstance(SmtpResponse response) {
         final HandlerResult obj = RECYCLER.get();
         obj.response = response;

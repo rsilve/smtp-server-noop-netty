@@ -24,7 +24,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
     private static final ByteBuf DOT_CRLF_DELIMITER = Unpooled.wrappedBuffer(new byte[]{46, 13, 10});
     private static final CharSequence[] EMPTY_CHAR_SEQUENCE = {};
-    private static final CommandMap commandMap = new CommandMap();
+    private static final CommandMap commandMap = CommandMap.getInstance();
     private final SmtpServerConfiguration configuration;
 
     private final AtomicBoolean contentExpected;
@@ -35,7 +35,6 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
         this.configuration = configuration;
         Objects.requireNonNull(configuration, "content expected shared properties required");
         this.contentExpected = contentExpected;
-
     }
 
     @Override
@@ -50,7 +49,7 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
 
     private void readContent(ChannelHandlerContext ctx, ByteBuf frame) {
         RecyclableSmtpContent result;
-        if (frame.equals(DOT_CRLF_DELIMITER)) {
+        if (DOT_CRLF_DELIMITER.equals(frame)) {
             this.contentExpected.set(false);
             result = RecyclableLastSmtpContent.newInstance(frame.retain());
         } else {
@@ -70,26 +69,23 @@ public class SmtpRequestDecoder extends SimpleChannelInboundHandler<ByteBuf> {
     }
 
     private RecyclableSmtpRequest parseLine(ByteBuf frame) throws InvalidProtocolException {
+        if (!frame.isReadable()) {
+            throw InvalidProtocolException.newInstance(configuration.responses.responseBadSyntax);
+        }
         int readable = frame.readableBytes();
         if (readable < 6) {
             throw InvalidProtocolException.newInstance(configuration.responses.responseUnknownCommand);
         }
-        CharSequence detail = frame.isReadable() ? frame.toString(CharsetUtil.US_ASCII) : null;
-        if (Objects.isNull(detail)) {
-            throw InvalidProtocolException.newInstance(configuration.responses.responseBadSyntax);
-        }
-
-        final CharSequence command = getCommand(detail);
-        final CharSequence[] parameters = getParameters(detail, command);
-        return RecyclableSmtpRequest.newInstance(SmtpCommand.valueOf(command), parameters);
+        final CharSequence line = frame.toString(CharsetUtil.US_ASCII);
+        final CharSequence command = extractCommand(line);
+        return RecyclableSmtpRequest.newInstance(SmtpCommand.valueOf(command), extractParameters(line, command));
     }
 
-    private CharSequence getCommand(CharSequence line) {
-        final CharSequence command = line.subSequence(0, 4);
-        return AsciiString.of(command).toUpperCase();
+    private CharSequence extractCommand(CharSequence line) {
+        return AsciiString.of(line.subSequence(0, 4)).toUpperCase();
     }
 
-    private CharSequence[] getParameters(CharSequence line, CharSequence command) throws InvalidProtocolException {
+    private CharSequence[] extractParameters(CharSequence line, CharSequence command) throws InvalidProtocolException {
         if (line.length() == 6) {
             return EMPTY_CHAR_SEQUENCE;
         }

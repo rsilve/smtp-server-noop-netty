@@ -1,6 +1,8 @@
 package net.silve.codec;
 
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.handler.codec.smtp.SmtpCommand;
 import io.netty.handler.codec.smtp.SmtpResponse;
@@ -154,5 +156,47 @@ class SmtpRequestHandlerTest {
         assertEquals(configuration.responses.responseSenderNeeded, response);
 
     }
+
+    @Test
+    void shouldReturnResponseOnRset() {
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration, contentExpected));
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(configuration.responses.responseGreeting, response);
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.RSET)));
+        response = channel.readOutbound();
+        assertEquals(configuration.responses.responseRsetOk, response);
+        assertTrue(channel.isActive());
+    }
+
+
+    @Test
+    void shouldReturnResponseOnQuit() {
+        EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration, contentExpected));
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(configuration.responses.responseGreeting, response);
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.QUIT)));
+        response = channel.readOutbound();
+        assertEquals(configuration.responses.responseBye, response);
+        assertFalse(channel.isActive());
+    }
+
+    @Test
+    void shouldReturnResponseException() {
+        EmbeddedChannel channel = new EmbeddedChannel(
+                new ChannelInboundHandlerAdapter() {
+                    @Override
+                    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                        throw new RuntimeException("ee");
+                    }
+                },
+                new SmtpRequestHandler(configuration, contentExpected));
+        SmtpResponse response = channel.readOutbound();
+        assertEquals(configuration.responses.responseGreeting, response);
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.HELO)));
+        response = channel.readOutbound();
+        assertEquals(configuration.responses.responseServerError, response);
+        assertFalse(channel.isActive());
+    }
+
 
 }
