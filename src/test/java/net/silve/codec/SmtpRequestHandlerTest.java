@@ -20,8 +20,8 @@ import static org.mockito.Mockito.*;
 
 class SmtpRequestHandlerTest {
 
-    SmtpServerConfiguration configuration = new SmtpServerConfiguration(new SmtpServerConfigurationBuilder());
     private final AtomicBoolean contentExpected = new AtomicBoolean(false);
+    SmtpServerConfiguration configuration = new SmtpServerConfiguration(new SmtpServerConfigurationBuilder());
 
     @Test
     void shouldReturnGreeting() {
@@ -92,7 +92,7 @@ class SmtpRequestHandlerTest {
         EmbeddedChannel channel = new EmbeddedChannel(new SmtpRequestHandler(configuration, contentExpected));
         SmtpResponse response = channel.readOutbound();
         assertEquals(configuration.responses.responseGreeting, response);
-        assertTrue(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.valueOf("FOO"))));
+        assertFalse(channel.writeInbound(RecyclableSmtpRequest.newInstance(SmtpCommand.valueOf("FOO"))));
         response = channel.readOutbound();
         assertEquals(configuration.responses.responseUnknownCommand, response);
     }
