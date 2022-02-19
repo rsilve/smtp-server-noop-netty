@@ -124,9 +124,7 @@ public class SmtpServer implements Callable<Integer> {
             }
         };
 
-
         Metrics.addRegistry(registry);
-
         ScheduledReporter reporter = Slf4jReporter.forRegistry(metricRegistry)
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)

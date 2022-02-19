@@ -36,12 +36,10 @@ public class SmtpLogger {
         }
 
         if (session.isAccepted()) {
-            Metrics.counter("smtp.received", "message", "received").increment();
-            if (logger.isDebugEnabled()) {
-                logger.debug("{} message accepted", session.getId());
-            }
+            Metrics.counter("smtp", "message", "received").increment();
+            logger.debug("{} message accepted", session.getId());
         } else {
-            Metrics.counter("smtp.rejected", "message", "rejected").increment();
+            Metrics.counter("smtp", "message", "rejected").increment();
             String lastError = Objects.nonNull(session.lastError()) ? session.lastError() : "";
             logger.debug("{} message rejected ({})", session.getId(), lastError);
         }
