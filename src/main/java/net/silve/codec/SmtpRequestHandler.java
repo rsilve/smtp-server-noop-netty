@@ -81,12 +81,13 @@ public class SmtpRequestHandler extends ChannelInboundHandlerAdapter {
             final SmtpCommand command = request.command();
             final CommandHandler commandHandler = commandMap.getHandler(command.name());
             HandlerResult result = commandHandler.response(request, messageSession, configuration);
-            result.getSessionAction().execute(messageSession);
-            result.getAction().execute(ctx, contentExpected);
-            final ChannelFuture channelFuture = ctx.writeAndFlush(result.getResponse());
             if (request.command().equals(SmtpCommand.RSET) || request.command().equals(SmtpCommand.QUIT)) {
                 SmtpLogger.info(messageSession);
             }
+            result.getSessionAction().execute(messageSession);
+            result.getAction().execute(ctx, contentExpected);
+            final ChannelFuture channelFuture = ctx.writeAndFlush(result.getResponse());
+
             if (result.getResponse().code() == 221 || result.getResponse().code() == 421) {
                 channelFuture.addListener(ChannelFutureListener.CLOSE);
             }
