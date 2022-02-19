@@ -120,7 +120,7 @@ public class SmtpServer implements Callable<Integer> {
         MeterRegistry registry = new DropwizardMeterRegistry(consoleConfig, metricRegistry, HierarchicalNameMapper.DEFAULT, Clock.SYSTEM) {
             @Override
             protected Double nullGaugeValue() {
-                return null;
+                return 0d;
             }
         };
 
