@@ -1,6 +1,15 @@
 package net.silve;
 
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.ScheduledReporter;
+import com.codahale.metrics.Slf4jReporter;
+import io.micrometer.core.instrument.Clock;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.dropwizard.DropwizardConfig;
+import io.micrometer.core.instrument.dropwizard.DropwizardMeterRegistry;
+import io.micrometer.core.instrument.util.HierarchicalNameMapper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -15,6 +24,7 @@ import picocli.CommandLine;
 import javax.annotation.Nonnull;
 import java.net.UnknownHostException;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 
 @CommandLine.Command(name = "smtp-noop", mixinStandardHelpOptions = true,
@@ -60,6 +70,8 @@ public class SmtpServer implements Callable<Integer> {
     }
 
     public void run() throws InterruptedException, UnknownHostException {
+        ScheduledReporter reporter = initializeMetricReporter();
+
         SmtpServerConfiguration configuration = configure();
 
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -83,10 +95,43 @@ public class SmtpServer implements Callable<Integer> {
             // In this example, this does not happen, but you can do that to gracefully
             // shut down your server.
             f.channel().closeFuture().sync();
+            reporter.stop();
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
         }
+    }
+
+    private ScheduledReporter initializeMetricReporter() {
+        MetricRegistry metricRegistry = new MetricRegistry();
+        DropwizardConfig consoleConfig = new DropwizardConfig() {
+
+            @Override
+            public String prefix() {
+                return "console";
+            }
+
+            @Override
+            public String get(String key) {
+                return null;
+            }
+
+        };
+        MeterRegistry registry = new DropwizardMeterRegistry(consoleConfig, metricRegistry, HierarchicalNameMapper.DEFAULT, Clock.SYSTEM) {
+            @Override
+            protected Double nullGaugeValue() {
+                return 0d;
+            }
+        };
+
+        Metrics.addRegistry(registry);
+        ScheduledReporter reporter = Slf4jReporter.forRegistry(metricRegistry)
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .build();
+
+        reporter.start(60, TimeUnit.SECONDS);
+        return reporter;
     }
 
     @Nonnull

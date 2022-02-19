@@ -1,5 +1,6 @@
 package net.silve.codec.logger;
 
+import io.micrometer.core.instrument.Metrics;
 import net.silve.codec.session.MessageSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,12 @@ public class SmtpLogger {
         }
 
         if (session.isAccepted()) {
-            logger.info("{} message accepted", session.getId());
+            Metrics.counter("smtp", "message", "received").increment();
+            logger.debug("{} message accepted", session.getId());
         } else {
+            Metrics.counter("smtp", "message", "rejected").increment();
             String lastError = Objects.nonNull(session.lastError()) ? session.lastError() : "";
-            logger.info("{} message rejected ({})", session.getId(), lastError);
+            logger.debug("{} message rejected ({})", session.getId(), lastError);
         }
 
     }
