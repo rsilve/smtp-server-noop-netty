@@ -132,7 +132,7 @@ public class SmtpServer implements Callable<Integer> {
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build();
 
-        reporter.start(10, TimeUnit.SECONDS);
+        reporter.start(60, TimeUnit.SECONDS);
         return reporter;
     }
 
