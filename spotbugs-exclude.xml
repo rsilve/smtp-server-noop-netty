@@ -5,7 +5,7 @@
         xsi:schemaLocation="https://github.com/spotbugs/filter/3.0.0 https://raw.githubusercontent.com/spotbugs/spotbugs/3.1.0/spotbugs/etc/findbugsfilter.xsd">
 
     <Match>
-        <Bug code="EI,EI2"/>
+        <Bug code="EI,EI2,THROWS"/>
     </Match>
     <Match>
         <Class name="~net.silve.codec.request.Recyclable.*SmtpContent"/>
@@ -16,5 +16,10 @@
         <Class name="net.silve.codec.logger.SmtpLogger"/>
         <Method name="getInstance"/>
         <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Class name="net.silve.SmtpServer"/>
+        <Method name="initializeMetricReporter"/>
+        <Bug pattern="DLS_DEAD_LOCAL_STORE"/>
     </Match>
 </FindBugsFilter>

@@ -23,8 +23,6 @@ import picocli.CommandLine;
 
 import javax.annotation.Nonnull;
 import java.net.UnknownHostException;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -78,7 +76,7 @@ public class SmtpServer implements Callable<Integer> {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup(thread);
 
-        ScheduledReporter reporter = initializeMetricReporter(bossGroup);
+        ScheduledReporter reporter = initializeMetricReporter();
 
         Runtime.getRuntime().addShutdownHook(new ShutdownThread(workerGroup, bossGroup));
 
@@ -105,7 +103,7 @@ public class SmtpServer implements Callable<Integer> {
         }
     }
 
-    private ScheduledReporter initializeMetricReporter(EventLoopGroup bossGroup) {
+    private ScheduledReporter initializeMetricReporter() {
         MetricRegistry metricRegistry = new MetricRegistry();
         DropwizardConfig consoleConfig = new DropwizardConfig() {
 
@@ -127,11 +125,8 @@ public class SmtpServer implements Callable<Integer> {
             }
         };
 
-        Duration duration = Duration.between(LocalDateTime.now(), LocalDateTime.now().withHour(23).withMinute(59).withSecond(59));
-        bossGroup.scheduleAtFixedRate(registry::clear, duration.getSeconds(), 24 * 60 * 60L, TimeUnit.SECONDS);
-
         Metrics.addRegistry(registry);
-        ScheduledReporter reporter = Slf4jReporter.forRegistry(metricRegistry)
+        final ScheduledReporter reporter = Slf4jReporter.forRegistry(metricRegistry)
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build();
